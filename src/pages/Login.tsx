@@ -9,6 +9,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isUserMFASettings, isMFAVerificationCode } from "@/types/supabase-extensions";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -65,13 +66,13 @@ const Login = () => {
       
       // Check if user has MFA enabled
       if (data?.user) {
-        const { data: mfaData } = await supabase
+        const { data: mfaSettings } = await supabase
           .from('user_mfa_settings')
           .select('*')
           .eq('user_id', data.user.id)
           .single();
         
-        if (mfaData && mfaData.email_mfa_enabled) {
+        if (mfaSettings && isUserMFASettings(mfaSettings) && mfaSettings.email_mfa_enabled) {
           // User has MFA enabled, request verification
           setUserId(data.user.id);
           await sendMFACode(data.user.id, data.user.email);
@@ -129,7 +130,7 @@ const Login = () => {
       
       const { error } = await supabase
         .from('mfa_verification_codes')
-        .upsert({
+        .insert({
           user_id: userId,
           code: code,
           type: 'email',
@@ -172,7 +173,7 @@ const Login = () => {
         .gt('expires_at', now)
         .single();
       
-      if (error || !data) {
+      if (error || !data || !isMFAVerificationCode(data)) {
         throw new Error("Code de vérification invalide ou expiré");
       }
       

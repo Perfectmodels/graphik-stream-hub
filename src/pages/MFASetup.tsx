@@ -3,13 +3,12 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, Smartphone, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { isUserMFASettings, isMFAVerificationCode } from "@/types/supabase-extensions";
 
 const MFASetup = () => {
   const navigate = useNavigate();
@@ -35,13 +34,13 @@ const MFASetup = () => {
         setUser(session.user);
         
         // Check if MFA is already enabled for this user
-        const { data, error } = await supabase
+        const { data } = await supabase
           .from('user_mfa_settings')
           .select('*')
           .eq('user_id', session.user.id)
           .single();
         
-        if (data) {
+        if (data && isUserMFASettings(data)) {
           setEmailMFAEnabled(data.email_mfa_enabled || false);
         }
         
@@ -70,7 +69,7 @@ const MFASetup = () => {
       
       const { error } = await supabase
         .from('mfa_verification_codes')
-        .upsert({
+        .insert({
           user_id: user.id,
           code: code,
           type: 'email',
@@ -115,7 +114,7 @@ const MFASetup = () => {
         .gt('expires_at', now)
         .single();
       
-      if (error || !data) {
+      if (error || !data || !isMFAVerificationCode(data)) {
         throw new Error("Invalid or expired verification code");
       }
       
@@ -245,9 +244,9 @@ const MFASetup = () => {
               {verificationSent && (
                 <div className="mt-6 space-y-4">
                   <div>
-                    <Label htmlFor="verification-code" className="text-white">
+                    <label htmlFor="verification-code" className="text-white">
                       Code de vérification
-                    </Label>
+                    </label>
                     <div className="mt-2">
                       <InputOTP
                         maxLength={6}
