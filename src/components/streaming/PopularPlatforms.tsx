@@ -12,7 +12,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
       name: "Netflix",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1280px-Netflix_2015_logo.svg.png",
       description: "Leader mondial avec un immense catalogue de séries, films et documentaires",
-      price: "À partir de 5000 FCFA/mois",
+      price: "À partir de 3000 FCFA/mois",
       features: [
         "Milliers de films et séries",
         "Productions originales exclusives",
@@ -38,7 +38,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
       name: "Amazon Prime Video",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/1280px-Amazon_Prime_Video_logo.svg.png",
       description: "Challenger avec un catalogue en croissance et des productions originales",
-      price: "Inclus avec Amazon Prime (3500 FCFA/mois)",
+      price: "À partir de 3000 FCFA/mois",
       features: [
         "Milliers de films et séries",
         "Productions originales Amazon",
@@ -51,7 +51,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
       name: "Canal+",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Canal%2B.svg/1280px-Canal%2B.svg.png",
       description: "Séries françaises et internationales, productions originales et accès TV en direct",
-      price: "À partir de 15000 FCFA/mois",
+      price: "À partir de 6000 FCFA/mois",
       features: [
         "Content exclusif et chaînes premium",
         "Sport en direct",

@@ -22,10 +22,10 @@ export const getServicePrice = (service: string, duration: string): number => {
   const durationMonths = parseInt(duration);
   
   const basePrices: Record<string, number> = {
-    "Netflix": 5000,
+    "Netflix": 3000, // Updated from 5000 to 3000
     "Disney+": 4000,
-    "Amazon Prime Video": 3500,
-    "Canal+": 15000,
+    "Amazon Prime Video": 3000, // Updated from 3500 to 3000
+    "Canal+": 6000, // Updated from 15000 to 6000
     "Apple TV+": 4500,
     "Paramount+": 4000,
     "Max (ex-HBO Max)": 6000,
