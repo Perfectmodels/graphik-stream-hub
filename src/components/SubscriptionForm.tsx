@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -127,16 +126,32 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       };
       
       // Envoi à Supabase
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('subscription_requests')
-        .insert(subscriptionData);
+        .insert(subscriptionData)
+        .select()
+        .single();
         
       if (error) throw error;
-      
-      // Notification de succès
-      toast.success("Demande d'abonnement envoyée avec succès", {
-        description: "Nous vous contacterons bientôt pour confirmer votre abonnement."
-      });
+
+      // Envoi par email et WhatsApp
+      try {
+        await supabase.functions.invoke('send-subscription', {
+          body: { subscriptionId: data.id }
+        });
+        
+        // Notification de succès complète
+        toast.success("Demande d'abonnement envoyée avec succès", {
+          description: "Un email de confirmation a été envoyé à votre adresse. Nous vous contacterons bientôt."
+        });
+      } catch (sendError) {
+        console.error("Erreur lors de l'envoi des notifications:", sendError);
+        
+        // Le formulaire a été enregistré, mais l'envoi des notifications a échoué
+        toast.success("Demande d'abonnement enregistrée", {
+          description: "Votre demande a été enregistrée, mais l'envoi des notifications a échoué."
+        });
+      }
       
       // Redirection ou fermeture du modal
       if (isModal && onClose) {

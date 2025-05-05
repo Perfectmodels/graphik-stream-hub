@@ -15,7 +15,7 @@ const SubscriptionStatusBadge: React.FC<SubscriptionStatusBadgeProps> = ({ statu
       );
     case 'approved':
       return (
-        <div className="bg-green-500/20 text-green-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
+        <div className="bg-emerald-500/20 text-emerald-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
           Approuvé
         </div>
       );

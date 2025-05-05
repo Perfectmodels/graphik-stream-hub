@@ -32,7 +32,19 @@ const Login = () => {
     
     try {
       setLoading(true);
+
+      // Admin direct check (hard-coded for testing purposes)
+      if (email === "contact@graphikstudio.pro" && password === "PMM2025@") {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans l'interface d'administration !",
+          duration: 3000,
+        });
+        navigate('/admin/dashboard');
+        return;
+      }
       
+      // Standard authentication flow
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
