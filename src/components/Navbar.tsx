@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, LogIn } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -43,16 +43,11 @@ const Navbar = () => {
           ))}
         </nav>
 
-        {/* User actions */}
-        <div className="hidden md:flex items-center space-x-4">
-          <Link to="/login">
-            <Button variant="outline" size="sm" className="border-graphik-blue text-white hover:bg-graphik-blue/20">
-              <LogIn className="mr-2 h-4 w-4" /> Se connecter
-            </Button>
-          </Link>
-          <Link to="/register">
+        {/* S'abonner button */}
+        <div className="hidden md:flex items-center">
+          <Link to="/subscribe">
             <Button size="sm" className="bg-graphik-blue hover:bg-graphik-blue/80">
-              <User className="mr-2 h-4 w-4" /> S'inscrire
+              S'abonner
             </Button>
           </Link>
         </div>
@@ -85,15 +80,10 @@ const Navbar = () => {
                   {item.name}
                 </Link>
               ))}
-              <div className="flex flex-col space-y-2 pt-4 border-t border-graphik-light-grey">
-                <Link to="/login" onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full border-graphik-blue text-white hover:bg-graphik-blue/20">
-                    <LogIn className="mr-2 h-4 w-4" /> Se connecter
-                  </Button>
-                </Link>
-                <Link to="/register" onClick={() => setIsOpen(false)}>
+              <div className="pt-4 border-t border-graphik-light-grey">
+                <Link to="/subscribe" onClick={() => setIsOpen(false)}>
                   <Button className="w-full bg-graphik-blue hover:bg-graphik-blue/80">
-                    <User className="mr-2 h-4 w-4" /> S'inscrire
+                    S'abonner
                   </Button>
                 </Link>
               </div>

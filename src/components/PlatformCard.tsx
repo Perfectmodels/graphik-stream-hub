@@ -1,6 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface PlatformCardProps {
   name: string;
@@ -51,12 +52,13 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
             ))}
           </ul>
         )}
-        <Button 
-          onClick={buttonAction} 
-          className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mt-auto"
-        >
-          {buttonText}
-        </Button>
+        <Link to="/subscribe" state={{ serviceType: name }}>
+          <Button 
+            className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mt-auto"
+          >
+            {buttonText}
+          </Button>
+        </Link>
       </div>
     </div>
   );

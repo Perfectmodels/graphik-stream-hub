@@ -1,20 +1,18 @@
 
-import React, { useState } from "react";
+import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
-import SubscriptionDialog from "@/components/SubscriptionDialog";
 import PlatformTabs from "@/components/streaming/PlatformTabs";
 import ComparisonTable from "@/components/streaming/ComparisonTable";
 import VideoFAQ from "@/components/streaming/VideoFAQ";
+import { useNavigate } from "react-router-dom";
 
 const StreamingVideo = () => {
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedPlatform, setSelectedPlatform] = useState("");
+  const navigate = useNavigate();
 
   const handleSubscribe = (platform: string) => {
-    setSelectedPlatform(platform);
-    setIsDialogOpen(true);
+    navigate("/subscribe", { state: { serviceType: platform } });
   };
 
   return (
@@ -31,13 +29,6 @@ const StreamingVideo = () => {
         <PlatformTabs onSubscribe={handleSubscribe} />
         <ComparisonTable />
         <VideoFAQ />
-
-        {/* Subscription Dialog */}
-        <SubscriptionDialog 
-          open={isDialogOpen} 
-          onOpenChange={setIsDialogOpen}
-          serviceType={selectedPlatform}
-        />
       </main>
       <Footer />
     </>
