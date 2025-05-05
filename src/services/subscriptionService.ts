@@ -10,21 +10,21 @@ export const sendSubscriptionDocuments = async (subscriptionId: number): Promise
     });
     
     if (error) {
-      console.error("Erreur lors de l'envoi des documents:", error);
+      console.error("Erreur lors de l'envoi de la notification:", error);
       toast.error("Erreur", {
-        description: "Les documents n'ont pas pu être envoyés. Notre équipe vous contactera sous peu."
+        description: "La notification WhatsApp n'a pas pu être envoyée. Notre équipe vous contactera sous peu."
       });
       return false;
     }
     
-    toast.success("Documents envoyés", {
-      description: "Les détails de votre demande ont été envoyés à votre email et WhatsApp."
+    toast.success("Notification envoyée", {
+      description: "Les détails de votre demande ont été envoyés sur WhatsApp."
     });
     return true;
   } catch (error) {
     console.error("Erreur lors de l'appel à la fonction:", error);
     toast.error("Erreur", {
-      description: "Les documents n'ont pas pu être envoyés. Notre équipe vous contactera sous peu."
+      description: "La notification WhatsApp n'a pas pu être envoyée. Notre équipe vous contactera sous peu."
     });
     return false;
   }

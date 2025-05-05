@@ -65,19 +65,17 @@ serve(async (req) => {
       );
     }
 
-    // Generate PDF
+    // Generate PDF (we still generate it for internal records)
     const pdfBuffer = await generateSubscriptionPDF(subscription);
 
-    // Send Email with PDF
-    const emailResult = await sendSubscriptionEmail(subscription, pdfBuffer);
-    
-    // Send WhatsApp
+    // Send WhatsApp notification only
     const whatsappResult = await sendSubscriptionWhatsApp(subscription);
+    
+    console.log("WhatsApp notification result:", whatsappResult ? "Success" : "Failed");
 
     return new Response(
       JSON.stringify({ 
         success: true, 
-        email: emailResult, 
         whatsapp: whatsappResult 
       }),
       { 
@@ -287,31 +285,27 @@ async function generateSubscriptionPDF(subscription: SubscriptionRequest): Promi
   }
 }
 
-async function sendSubscriptionEmail(subscription: SubscriptionRequest, pdfBuffer: Uint8Array): Promise<boolean> {
-  try {
-    console.log(`Envoi d'email à: ${subscription.email} et contact@graphikstudio.pro`);
-    console.log("Fichier PDF joint à l'email");
-    
-    // Note: In a real environment, you would use an email service API
-    // For now, we just log the details and return success
-    
-    // Example implementation with an email service would be:
-    // 1. Convert pdfBuffer to a base64 string for attachment
-    // 2. Send email with attachment using a service like SendGrid, Mailgun, etc.
-    
-    return true;
-  } catch (error) {
-    console.error("Error sending email:", error);
-    return false;
-  }
-}
-
 async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Promise<boolean> {
   try {
-    console.log(`Envoi d'un message WhatsApp à: ${subscription.phone}`);
-    console.log("Détails de l'abonnement inclus dans le message WhatsApp");
+    // Format WhatsApp message
+    const message = `🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
+      `*Client:* ${subscription.full_name}\n` +
+      `*Téléphone:* ${subscription.phone}\n` +
+      `*Email:* ${subscription.email}\n` +
+      `*Service:* ${subscription.service_type}\n` +
+      `*Durée:* ${subscription.duration_months} mois\n` +
+      `*Prix total:* ${subscription.total_price} FCFA\n` +
+      `*Paiement:* ${subscription.payment_method}\n\n` +
+      `Date de début: ${subscription.start_date}\n` +
+      `Date de fin: ${subscription.end_date}\n` +
+      (subscription.address ? `Adresse: ${subscription.address}\n` : "") +
+      (subscription.additional_info ? `\n*Informations supplémentaires:*\n${subscription.additional_info}\n` : "") +
+      `\n*ID de la demande:* ${subscription.id}`;
     
-    // Note: In a real environment, you would use WhatsApp Business API
+    console.log(`Préparation du message WhatsApp pour: ${subscription.phone}`);
+    console.log("Contenu du message WhatsApp:", message);
+    
+    // In a real environment, you would use WhatsApp Business API here
     // For now, we just log the details and return success
     
     return true;

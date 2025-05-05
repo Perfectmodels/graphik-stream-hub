@@ -12,6 +12,7 @@ import { submitSubscriptionForm, sendSubscriptionDocuments } from "@/services/su
 import PersonalInfoFields from "./subscription/PersonalInfoFields";
 import ServiceSelectionFields from "./subscription/ServiceSelectionFields";
 import AdditionalInfoField from "./subscription/AdditionalInfoField";
+import { AlertCircle } from "lucide-react";
 
 interface SubscriptionFormProps {
   defaultServiceType?: string;
@@ -48,20 +49,20 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       // Submit the form data and get the result
       const data = await submitSubscriptionForm(values);
       
-      // Send subscription documents
+      // Send subscription documents via WhatsApp
       try {
         await sendSubscriptionDocuments(data.id);
         
-        // Notification de succès complète
+        // Notification de succès
         toast.success("Demande d'abonnement envoyée avec succès", {
-          description: "Un email de confirmation a été envoyé à votre adresse. Nous vous contacterons bientôt."
+          description: "Un message WhatsApp a été envoyé avec les détails. Nous vous contacterons bientôt."
         });
       } catch (sendError) {
-        console.error("Erreur lors de l'envoi des notifications:", sendError);
+        console.error("Erreur lors de l'envoi de la notification WhatsApp:", sendError);
         
-        // Le formulaire a été enregistré, mais l'envoi des notifications a échoué
+        // Le formulaire a été enregistré, mais l'envoi de la notification a échoué
         toast.success("Demande d'abonnement enregistrée", {
-          description: "Votre demande a été enregistrée, mais l'envoi des notifications a échoué."
+          description: "Votre demande a été enregistrée, mais l'envoi de la notification WhatsApp a échoué."
         });
       }
       
@@ -92,6 +93,13 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       </CardHeader>
       
       <CardContent>
+        <div className="bg-blue-900/20 border border-blue-800 p-4 rounded-md mb-6 flex items-start">
+          <AlertCircle className="text-blue-400 mr-3 h-5 w-5 mt-0.5" />
+          <p className="text-blue-100 text-sm">
+            Une fois votre demande soumise, vous recevrez un message WhatsApp avec tous les détails de votre abonnement. Assurez-vous que votre numéro de téléphone est correct.
+          </p>
+        </div>
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <PersonalInfoFields form={form} disabled={isSubmitting} />
