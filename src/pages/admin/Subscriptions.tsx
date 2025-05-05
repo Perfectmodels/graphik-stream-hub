@@ -66,7 +66,24 @@ const AdminSubscriptions = () => {
         
       if (error) throw error;
       
-      setSubscriptions(data || []);
+      if (data) {
+        // Convertit les données pour correspondre au type Subscription
+        const typedData: Subscription[] = data.map(item => ({
+          id: item.id,
+          full_name: item.full_name,
+          email: item.email,
+          phone: item.phone,
+          service_type: item.service_type,
+          status: item.status as 'pending' | 'approved' | 'rejected',
+          total_price: item.total_price,
+          created_at: item.created_at,
+          start_date: item.start_date,
+          end_date: item.end_date,
+          duration_months: item.duration_months
+        }));
+        
+        setSubscriptions(typedData);
+      }
     } catch (error) {
       console.error("Erreur lors de la récupération des abonnements:", error);
       toast({
@@ -205,7 +222,7 @@ const AdminSubscriptions = () => {
                     </TableCell>
                     <TableCell className="text-gray-300">{sub.service_type}</TableCell>
                     <TableCell>{getStatusBadge(sub.status)}</TableCell>
-                    <TableCell className="text-gray-300">{sub.total_price} €</TableCell>
+                    <TableCell className="text-gray-300">{sub.total_price} FCFA</TableCell>
                     <TableCell className="text-gray-300">{sub.duration_months} mois</TableCell>
                     <TableCell className="text-gray-300">
                       {new Date(sub.created_at).toLocaleDateString()}

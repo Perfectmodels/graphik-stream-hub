@@ -17,6 +17,7 @@ import Contact from "./pages/Contact";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Subscribe from "./pages/Subscribe";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -43,6 +44,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/subscribe" element={<Subscribe />} />
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

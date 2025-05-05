@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
@@ -7,18 +7,16 @@ import SectionHeader from "@/components/SectionHeader";
 import PlatformCard from "@/components/PlatformCard";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
-import { Gamepad2, CreditCard, BadgeCheck, ShoppingCart } from "lucide-react";
+import { CreditCard, BadgeCheck, ShoppingCart, Gamepad2 } from "lucide-react";
+import SubscriptionDialog from "@/components/SubscriptionDialog";
 
 const Gaming = () => {
-  const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("");
 
   const handleSubscribe = (platform: string) => {
-    toast({
-      title: "Achat en cours",
-      description: `Vous allez être redirigé vers la page d'achat ${platform}`,
-      duration: 3000,
-    });
+    setSelectedPlatform(platform);
+    setIsDialogOpen(true);
   };
 
   const games = [
@@ -26,7 +24,7 @@ const Gaming = () => {
       name: "Call of Duty",
       logo: "/placeholder.svg",
       description: "Crédits pour acheter des packs, skins et passes de combat",
-      price: "À partir de 9,99€",
+      price: "À partir de 6000 FCFA",
       features: [
         "Points CoD pour Modern Warfare",
         "Crédits pour Warzone",
@@ -39,7 +37,7 @@ const Gaming = () => {
       name: "Fortnite",
       logo: "/placeholder.svg",
       description: "V-Bucks pour acheter des cosmétiques et le Battle Pass",
-      price: "À partir de 7,99€",
+      price: "À partir de 5000 FCFA",
       features: [
         "V-Bucks pour tous les modes",
         "Battle Pass",
@@ -52,7 +50,7 @@ const Gaming = () => {
       name: "PUBG",
       logo: "/placeholder.svg",
       description: "UC (Unknown Cash) pour personnaliser votre expérience",
-      price: "À partir de 4,99€",
+      price: "À partir de 3000 FCFA",
       features: [
         "UC pour PUBG Mobile et PC",
         "Royal Pass",
@@ -65,7 +63,7 @@ const Gaming = () => {
       name: "Roblox",
       logo: "/placeholder.svg",
       description: "Robux pour acheter des objets, vêtements et expériences",
-      price: "À partir de 4,99€",
+      price: "À partir de 3000 FCFA",
       features: [
         "Robux pour toute la plateforme",
         "Objets et accessoires",
@@ -81,7 +79,7 @@ const Gaming = () => {
       name: "Xbox Game Pass",
       logo: "/placeholder.svg",
       description: "Accès à une bibliothèque de jeux Xbox et PC",
-      price: "À partir de 10,99€/mois",
+      price: "À partir de 7000 FCFA/mois",
       features: [
         "+100 jeux de haute qualité",
         "Nouvelles sorties day one",
@@ -94,7 +92,7 @@ const Gaming = () => {
       name: "PlayStation Plus",
       logo: "/placeholder.svg",
       description: "Abonnement premium pour les joueurs PlayStation",
-      price: "À partir de 8,99€/mois",
+      price: "À partir de 6000 FCFA/mois",
       features: [
         "Jeux mensuels offerts",
         "Multijoueur en ligne",
@@ -107,7 +105,7 @@ const Gaming = () => {
       name: "Nintendo Switch Online",
       logo: "/placeholder.svg",
       description: "Service en ligne pour Nintendo Switch",
-      price: "À partir de 3,99€/mois",
+      price: "À partir de 2500 FCFA/mois",
       features: [
         "Jeu en ligne",
         "Jeux NES et SNES",
@@ -120,7 +118,7 @@ const Gaming = () => {
       name: "EA Play",
       logo: "/placeholder.svg",
       description: "Abonnement aux jeux Electronic Arts",
-      price: "À partir de 4,99€/mois",
+      price: "À partir de 3500 FCFA/mois",
       features: [
         "Accès aux jeux EA",
         "Essais anticipés",
@@ -214,15 +212,15 @@ const Gaming = () => {
 
             <TabsContent value="playstation">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {[10, 20, 25, 50, 75].map((value) => (
+                {[5000, 10000, 15000, 25000, 50000].map((value) => (
                   <Card key={value} className="bg-graphik-grey border border-graphik-light-grey hover:border-graphik-blue transition-colors p-6 text-center cursor-pointer">
                     <div className="mb-4 h-10 flex items-center justify-center">
                       <CreditCard className="text-graphik-blue h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{value}€</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{value.toLocaleString()} FCFA</h3>
                     <p className="text-gray-300 text-sm mb-4">PlayStation Store</p>
                     <button
-                      onClick={() => handleSubscribe(`PlayStation Card ${value}€`)}
+                      onClick={() => handleSubscribe(`PlayStation Card ${value} FCFA`)}
                       className="w-full py-2 px-4 bg-graphik-blue hover:bg-graphik-blue/80 text-white rounded-md transition"
                     >
                       Acheter
@@ -234,15 +232,15 @@ const Gaming = () => {
 
             <TabsContent value="xbox">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {[10, 15, 25, 50, 100].map((value) => (
+                {[5000, 10000, 15000, 25000, 50000].map((value) => (
                   <Card key={value} className="bg-graphik-grey border border-graphik-light-grey hover:border-graphik-blue transition-colors p-6 text-center cursor-pointer">
                     <div className="mb-4 h-10 flex items-center justify-center">
                       <CreditCard className="text-graphik-blue h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{value}€</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{value.toLocaleString()} FCFA</h3>
                     <p className="text-gray-300 text-sm mb-4">Xbox Store</p>
                     <button
-                      onClick={() => handleSubscribe(`Xbox Card ${value}€`)}
+                      onClick={() => handleSubscribe(`Xbox Card ${value} FCFA`)}
                       className="w-full py-2 px-4 bg-graphik-blue hover:bg-graphik-blue/80 text-white rounded-md transition"
                     >
                       Acheter
@@ -254,15 +252,15 @@ const Gaming = () => {
 
             <TabsContent value="nintendo">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {[15, 25, 35, 50, 75].map((value) => (
+                {[5000, 10000, 15000, 25000, 50000].map((value) => (
                   <Card key={value} className="bg-graphik-grey border border-graphik-light-grey hover:border-graphik-blue transition-colors p-6 text-center cursor-pointer">
                     <div className="mb-4 h-10 flex items-center justify-center">
                       <CreditCard className="text-graphik-blue h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{value}€</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{value.toLocaleString()} FCFA</h3>
                     <p className="text-gray-300 text-sm mb-4">Nintendo eShop</p>
                     <button
-                      onClick={() => handleSubscribe(`Nintendo Card ${value}€`)}
+                      onClick={() => handleSubscribe(`Nintendo Card ${value} FCFA`)}
                       className="w-full py-2 px-4 bg-graphik-blue hover:bg-graphik-blue/80 text-white rounded-md transition"
                     >
                       Acheter
@@ -274,15 +272,15 @@ const Gaming = () => {
 
             <TabsContent value="steam">
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                {[10, 20, 30, 50, 100].map((value) => (
+                {[5000, 10000, 15000, 25000, 50000].map((value) => (
                   <Card key={value} className="bg-graphik-grey border border-graphik-light-grey hover:border-graphik-blue transition-colors p-6 text-center cursor-pointer">
                     <div className="mb-4 h-10 flex items-center justify-center">
                       <CreditCard className="text-graphik-blue h-8 w-8" />
                     </div>
-                    <h3 className="text-xl font-bold text-white mb-2">{value}€</h3>
+                    <h3 className="text-xl font-bold text-white mb-2">{value.toLocaleString()} FCFA</h3>
                     <p className="text-gray-300 text-sm mb-4">Steam Wallet</p>
                     <button
-                      onClick={() => handleSubscribe(`Steam Card ${value}€`)}
+                      onClick={() => handleSubscribe(`Steam Card ${value} FCFA`)}
                       className="w-full py-2 px-4 bg-graphik-blue hover:bg-graphik-blue/80 text-white rounded-md transition"
                     >
                       Acheter
@@ -319,7 +317,7 @@ const Gaming = () => {
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Paiements Sécurisés</h3>
                 <p className="text-gray-300">
-                  Multiples méthodes de paiement sécurisées : carte, PayPal, crypto, mobile
+                  Multiples méthodes de paiement sécurisées : carte, Mobile Money, virement bancaire
                 </p>
               </div>
 
@@ -431,7 +429,7 @@ const Gaming = () => {
                   Les codes sont-ils régionaux ou internationaux ?
                 </h3>
                 <p className="text-gray-300">
-                  La plupart de nos codes sont utilisables dans toute l'Europe. Certains sont spécifiques à des régions. L'information est clairement indiquée sur la page de chaque produit avant l'achat.
+                  La plupart de nos codes sont utilisables dans toute l'Afrique. Certains sont spécifiques à des régions. L'information est clairement indiquée sur la page de chaque produit avant l'achat.
                 </p>
               </div>
               <div className="bg-graphik-dark p-6 rounded-xl border border-graphik-light-grey">
@@ -439,7 +437,7 @@ const Gaming = () => {
                   Que faire si mon code ne fonctionne pas ?
                 </h3>
                 <p className="text-gray-300">
-                  Tous nos codes sont garantis. Si vous rencontrez un problème, contactez immédiatement notre service client. Nous résoudrons le problème ou vous rembourserons intégralement.
+                  Tous nos codes sont garantis. Si vous rencontrez un problème, contactez immédiatement notre service client via WhatsApp au +241 62 70 89 98. Nous résoudrons le problème ou vous rembourserons intégralement.
                 </p>
               </div>
               <div className="bg-graphik-dark p-6 rounded-xl border border-graphik-light-grey">
@@ -453,6 +451,13 @@ const Gaming = () => {
             </div>
           </div>
         </section>
+
+        {/* Subscription Dialog */}
+        <SubscriptionDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          serviceType={selectedPlatform}
+        />
       </main>
       <Footer />
     </>

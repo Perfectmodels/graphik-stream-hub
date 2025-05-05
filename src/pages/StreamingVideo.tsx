@@ -1,22 +1,20 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import SectionHeader from "@/components/SectionHeader";
 import PlatformCard from "@/components/PlatformCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useToast } from "@/hooks/use-toast";
+import SubscriptionDialog from "@/components/SubscriptionDialog";
 
 const StreamingVideo = () => {
-  const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("");
 
   const handleSubscribe = (platform: string) => {
-    toast({
-      title: "Abonnement en cours",
-      description: `Vous allez être redirigé vers la page d'abonnement ${platform}`,
-      duration: 3000,
-    });
+    setSelectedPlatform(platform);
+    setIsDialogOpen(true);
   };
 
   const platforms = [
@@ -24,7 +22,7 @@ const StreamingVideo = () => {
       name: "Netflix",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1280px-Netflix_2015_logo.svg.png",
       description: "Leader mondial avec un immense catalogue de séries, films et documentaires",
-      price: "À partir de 5,99€/mois",
+      price: "À partir de 5000 FCFA/mois",
       features: [
         "Milliers de films et séries",
         "Productions originales exclusives",
@@ -37,7 +35,7 @@ const StreamingVideo = () => {
       name: "Disney+",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/1280px-Disney%2B_logo.svg.png",
       description: "Accès aux univers Disney, Pixar, Marvel, Star Wars et National Geographic",
-      price: "À partir de 5,99€/mois",
+      price: "À partir de 4000 FCFA/mois",
       features: [
         "Franchises exclusives Disney, Marvel, Star Wars",
         "Contenu pour toute la famille",
@@ -50,7 +48,7 @@ const StreamingVideo = () => {
       name: "Amazon Prime Video",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/1280px-Amazon_Prime_Video_logo.svg.png",
       description: "Challenger avec un catalogue en croissance et des productions originales",
-      price: "Inclus avec Amazon Prime (6,99€/mois)",
+      price: "Inclus avec Amazon Prime (3500 FCFA/mois)",
       features: [
         "Milliers de films et séries",
         "Productions originales Amazon",
@@ -63,7 +61,7 @@ const StreamingVideo = () => {
       name: "Canal+",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Canal%2B.svg/1280px-Canal%2B.svg.png",
       description: "Séries françaises et internationales, productions originales et accès TV en direct",
-      price: "À partir de 22,99€/mois",
+      price: "À partir de 15000 FCFA/mois",
       features: [
         "Content exclusif et chaînes premium",
         "Sport en direct",
@@ -79,7 +77,7 @@ const StreamingVideo = () => {
       name: "Apple TV+",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Apple_TV_Plus_Logo.svg/1280px-Apple_TV_Plus_Logo.svg.png",
       description: "Plateforme axée sur des contenus originaux de qualité",
-      price: "À partir de 6,99€/mois",
+      price: "À partir de 4500 FCFA/mois",
       features: [
         "Contenus exclusifs Apple Originals",
         "Qualité 4K HDR et Dolby Atmos",
@@ -92,7 +90,7 @@ const StreamingVideo = () => {
       name: "Paramount+",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Paramount%2B_logo.svg/1280px-Paramount%2B_logo.svg.png",
       description: "Contenus de Paramount, CBS, Comedy Central et Nickelodeon",
-      price: "À partir de 7,99€/mois",
+      price: "À partir de 4000 FCFA/mois",
       features: [
         "Films Paramount récents",
         "Séries originales exclusives",
@@ -105,7 +103,7 @@ const StreamingVideo = () => {
       name: "Max (ex-HBO Max)",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/HBO_Max_Logo.svg/1280px-HBO_Max_Logo.svg.png",
       description: "Séries emblématiques de HBO et de nouveaux contenus Warner Bros",
-      price: "À partir de 9,99€/mois",
+      price: "À partir de 6000 FCFA/mois",
       features: [
         "Séries prestigieuses HBO",
         "Films Warner Bros",
@@ -198,7 +196,7 @@ const StreamingVideo = () => {
                 <tbody>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Netflix</td>
-                    <td className="py-4 px-6 text-gray-300">5,99€ - 17,99€</td>
+                    <td className="py-4 px-6 text-gray-300">5000 - 15000 FCFA</td>
                     <td className="py-4 px-6 text-gray-300">4K HDR</td>
                     <td className="py-4 px-6 text-gray-300">1-4</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -206,7 +204,7 @@ const StreamingVideo = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Disney+</td>
-                    <td className="py-4 px-6 text-gray-300">5,99€ - 11,99€</td>
+                    <td className="py-4 px-6 text-gray-300">4000 - 8000 FCFA</td>
                     <td className="py-4 px-6 text-gray-300">4K HDR</td>
                     <td className="py-4 px-6 text-gray-300">4</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -214,7 +212,7 @@ const StreamingVideo = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Prime Video</td>
-                    <td className="py-4 px-6 text-gray-300">6,99€ (Prime)</td>
+                    <td className="py-4 px-6 text-gray-300">3500 FCFA (Prime)</td>
                     <td className="py-4 px-6 text-gray-300">4K HDR</td>
                     <td className="py-4 px-6 text-gray-300">3</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -222,7 +220,7 @@ const StreamingVideo = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Canal+</td>
-                    <td className="py-4 px-6 text-gray-300">22,99€+</td>
+                    <td className="py-4 px-6 text-gray-300">15000+ FCFA</td>
                     <td className="py-4 px-6 text-gray-300">4K HDR</td>
                     <td className="py-4 px-6 text-gray-300">2</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -230,7 +228,7 @@ const StreamingVideo = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Apple TV+</td>
-                    <td className="py-4 px-6 text-gray-300">6,99€</td>
+                    <td className="py-4 px-6 text-gray-300">4500 FCFA</td>
                     <td className="py-4 px-6 text-gray-300">4K HDR</td>
                     <td className="py-4 px-6 text-gray-300">6 (partage familial)</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -284,6 +282,13 @@ const StreamingVideo = () => {
             </div>
           </div>
         </section>
+
+        {/* Subscription Dialog */}
+        <SubscriptionDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          serviceType={selectedPlatform}
+        />
       </main>
       <Footer />
     </>

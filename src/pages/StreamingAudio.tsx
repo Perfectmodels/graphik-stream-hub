@@ -1,21 +1,19 @@
 
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import SectionHeader from "@/components/SectionHeader";
 import PlatformCard from "@/components/PlatformCard";
-import { useToast } from "@/hooks/use-toast";
+import SubscriptionDialog from "@/components/SubscriptionDialog";
 
 const StreamingAudio = () => {
-  const { toast } = useToast();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("");
 
   const handleSubscribe = (platform: string) => {
-    toast({
-      title: "Abonnement en cours",
-      description: `Vous allez être redirigé vers la page d'abonnement ${platform}`,
-      duration: 3000,
-    });
+    setSelectedPlatform(platform);
+    setIsDialogOpen(true);
   };
 
   const platforms = [
@@ -23,7 +21,7 @@ const StreamingAudio = () => {
       name: "Spotify",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Spotify_logo_with_text.svg/1280px-Spotify_logo_with_text.svg.png",
       description: "Plus de 70 millions de titres, recommandations personnalisées, interface intuitive",
-      price: "À partir de 10,99€/mois",
+      price: "À partir de 3000 FCFA/mois",
       features: [
         "Plus de 70 millions de titres",
         "Playlists personnalisées",
@@ -36,7 +34,7 @@ const StreamingAudio = () => {
       name: "Apple Music",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apple_Music_icon.svg/1280px-Apple_Music_icon.svg.png",
       description: "Qualité sonore élevée, intégration avec l'écosystème Apple",
-      price: "À partir de 10,99€/mois",
+      price: "À partir de 3000 FCFA/mois",
       features: [
         "Plus de 75 millions de titres",
         "Audio spatial et Lossless",
@@ -49,7 +47,7 @@ const StreamingAudio = () => {
       name: "Deezer",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Deezer_logo.svg/1280px-Deezer_logo.svg.png",
       description: "Plateforme française, large catalogue, Flow personnalisé",
-      price: "À partir de 10,99€/mois",
+      price: "À partir de 2500 FCFA/mois",
       features: [
         "Plus de 73 millions de titres",
         "Flow personnalisé",
@@ -62,7 +60,7 @@ const StreamingAudio = () => {
       name: "Amazon Music",
       logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Amazon_Music_logo.svg/1280px-Amazon_Music_logo.svg.png",
       description: "Inclus avec Prime ou en version illimitée, qualité HD disponible",
-      price: "À partir de 9,99€/mois",
+      price: "À partir de 2500 FCFA/mois",
       features: [
         "Plus de 75 millions de titres",
         "Version limitée incluse avec Prime",
@@ -128,7 +126,7 @@ const StreamingAudio = () => {
                 <tbody>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Spotify</td>
-                    <td className="py-4 px-6 text-gray-300">10,99€/mois</td>
+                    <td className="py-4 px-6 text-gray-300">3000 FCFA/mois</td>
                     <td className="py-4 px-6 text-gray-300">+70 millions</td>
                     <td className="py-4 px-6 text-gray-300">320 kbps</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -136,7 +134,7 @@ const StreamingAudio = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Apple Music</td>
-                    <td className="py-4 px-6 text-gray-300">10,99€/mois</td>
+                    <td className="py-4 px-6 text-gray-300">3000 FCFA/mois</td>
                     <td className="py-4 px-6 text-gray-300">+75 millions</td>
                     <td className="py-4 px-6 text-gray-300">Lossless, Spatial</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -144,7 +142,7 @@ const StreamingAudio = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Deezer</td>
-                    <td className="py-4 px-6 text-gray-300">10,99€/mois</td>
+                    <td className="py-4 px-6 text-gray-300">2500 FCFA/mois</td>
                     <td className="py-4 px-6 text-gray-300">+73 millions</td>
                     <td className="py-4 px-6 text-gray-300">FLAC (HiFi)</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -152,7 +150,7 @@ const StreamingAudio = () => {
                   </tr>
                   <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                     <td className="py-4 px-6 text-white">Amazon Music</td>
-                    <td className="py-4 px-6 text-gray-300">9,99€/mois</td>
+                    <td className="py-4 px-6 text-gray-300">2500 FCFA/mois</td>
                     <td className="py-4 px-6 text-gray-300">+75 millions</td>
                     <td className="py-4 px-6 text-gray-300">Ultra HD</td>
                     <td className="py-4 px-6 text-gray-300">✓</td>
@@ -269,6 +267,13 @@ const StreamingAudio = () => {
             </div>
           </div>
         </section>
+
+        {/* Subscription Dialog */}
+        <SubscriptionDialog 
+          open={isDialogOpen} 
+          onOpenChange={setIsDialogOpen}
+          serviceType={selectedPlatform}
+        />
       </main>
       <Footer />
     </>

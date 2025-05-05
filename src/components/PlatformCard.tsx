@@ -21,6 +21,17 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
   buttonText = "S'abonner",
   buttonAction,
 }) => {
+  // Fonction pour convertir le prix en FCFA si nécessaire
+  const formatPrice = (priceStr: string | undefined) => {
+    if (!priceStr) return '';
+    
+    // Si le prix contient déjà "FCFA", on le retourne tel quel
+    if (priceStr.includes('FCFA')) return priceStr;
+    
+    // Sinon on remplace € par FCFA
+    return priceStr.replace('€', 'FCFA');
+  };
+
   return (
     <div className="service-card h-full flex flex-col">
       <div className="p-6 flex items-center justify-center bg-graphik-dark/50">
@@ -29,7 +40,7 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
       <div className="p-6 flex-grow flex flex-col">
         <h3 className="text-xl font-bold text-white mb-2">{name}</h3>
         <p className="text-gray-300 mb-4">{description}</p>
-        {price && <p className="text-graphik-blue font-bold mb-4">{price}</p>}
+        {price && <p className="text-graphik-blue font-bold mb-4">{formatPrice(price)}</p>}
         {features && (
           <ul className="mb-4 space-y-2 flex-grow">
             {features.map((feature, index) => (
