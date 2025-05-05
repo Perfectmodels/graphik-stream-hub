@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
@@ -15,6 +16,14 @@ const Login = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  
+  // MFA related states
+  const [requiresMFA, setRequiresMFA] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [mfaCode, setMfaCode] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [resending, setResending] = useState(false);
+  
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -54,8 +63,24 @@ const Login = () => {
         throw error;
       }
       
-      // Check if user is admin
+      // Check if user has MFA enabled
       if (data?.user) {
+        const { data: mfaData } = await supabase
+          .from('user_mfa_settings')
+          .select('*')
+          .eq('user_id', data.user.id)
+          .single();
+        
+        if (mfaData && mfaData.email_mfa_enabled) {
+          // User has MFA enabled, request verification
+          setUserId(data.user.id);
+          await sendMFACode(data.user.id, data.user.email);
+          setRequiresMFA(true);
+          setLoading(false);
+          return;
+        }
+
+        // Check if user is admin
         const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
           user_id: data.user.id
         });
@@ -89,6 +114,184 @@ const Login = () => {
     }
   };
 
+  const sendMFACode = async (userId: string, userEmail: string | undefined) => {
+    if (!userId || !userEmail) return;
+    
+    try {
+      setResending(true);
+      
+      // Generate a random 6-digit code
+      const code = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Store the code in the database with an expiration time (10 minutes)
+      const expiresAt = new Date();
+      expiresAt.setMinutes(expiresAt.getMinutes() + 10);
+      
+      const { error } = await supabase
+        .from('mfa_verification_codes')
+        .upsert({
+          user_id: userId,
+          code: code,
+          type: 'email',
+          expires_at: expiresAt.toISOString(),
+        });
+      
+      if (error) throw error;
+      
+      // Send email with the code (in a real app, this would use an edge function)
+      // For demo purposes, we'll just show the code in a toast
+      toast({
+        title: "Code de vérification envoyé",
+        description: `À des fins de démonstration, votre code est : ${code}`,
+      });
+    } catch (error: any) {
+      toast({
+        title: "Erreur d'envoi",
+        description: error.message || "Impossible d'envoyer le code de vérification",
+        variant: "destructive",
+      });
+    } finally {
+      setResending(false);
+    }
+  };
+
+  const verifyMFACode = async () => {
+    if (!userId || !mfaCode) return;
+    
+    try {
+      setVerifying(true);
+      
+      // Check if the verification code is valid
+      const now = new Date().toISOString();
+      const { data, error } = await supabase
+        .from('mfa_verification_codes')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('code', mfaCode)
+        .eq('type', 'email')
+        .gt('expires_at', now)
+        .single();
+      
+      if (error || !data) {
+        throw new Error("Code de vérification invalide ou expiré");
+      }
+      
+      // Delete the used verification code
+      await supabase
+        .from('mfa_verification_codes')
+        .delete()
+        .eq('id', data.id);
+      
+      // Check if user is admin
+      const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
+        user_id: userId
+      });
+      
+      if (!adminError && adminData === true) {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans l'interface d'administration !",
+          duration: 3000,
+        });
+        navigate('/admin/dashboard');
+        return;
+      }
+      
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue sur Graphik'Studio !",
+        duration: 3000,
+      });
+      navigate('/');
+      
+    } catch (error: any) {
+      toast({
+        title: "Erreur de vérification",
+        description: error.message || "Impossible de vérifier le code",
+        variant: "destructive",
+      });
+    } finally {
+      setVerifying(false);
+    }
+  };
+
+  // Render MFA verification screen if required
+  if (requiresMFA) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-graphik-dark px-4 py-12">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <Link to="/" className="inline-block">
+              <span className="text-3xl font-bold bg-gradient-to-r from-graphik-blue via-graphik-purple to-graphik-lightblue bg-clip-text text-transparent">
+                Graphik'Studio
+              </span>
+            </Link>
+            <h1 className="text-2xl font-bold text-white mt-6 mb-2">Vérification à deux facteurs</h1>
+            <p className="text-gray-400">
+              Un code de vérification a été envoyé à votre adresse e-mail
+            </p>
+          </div>
+
+          <Card className="bg-graphik-grey border-graphik-light-grey p-6">
+            <div className="flex items-center justify-center text-graphik-blue mb-6">
+              <Mail className="h-16 w-16" />
+            </div>
+            
+            <p className="text-center text-white mb-6">
+              Veuillez saisir le code à 6 chiffres envoyé à votre adresse e-mail
+            </p>
+            
+            <div className="mb-6">
+              <InputOTP
+                maxLength={6}
+                value={mfaCode}
+                onChange={setMfaCode}
+                render={({ slots }) => (
+                  <InputOTPGroup className="justify-center">
+                    {slots.map((slot, index) => (
+                      <InputOTPSlot 
+                        key={index} 
+                        index={index} 
+                        className="bg-graphik-dark border-graphik-light-grey text-white w-12 h-12 text-xl"
+                      />
+                    ))}
+                  </InputOTPGroup>
+                )}
+              />
+            </div>
+            
+            <Button
+              onClick={verifyMFACode}
+              disabled={mfaCode.length !== 6 || verifying}
+              className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mb-4"
+            >
+              {verifying ? "Vérification..." : "Vérifier"}
+            </Button>
+            
+            <button
+              type="button"
+              onClick={() => sendMFACode(userId!, email)}
+              disabled={resending}
+              className="w-full text-center text-sm text-graphik-blue hover:text-graphik-lightblue"
+            >
+              {resending ? "Envoi en cours..." : "Vous n'avez pas reçu de code ? Renvoyer"}
+            </button>
+          </Card>
+
+          <div className="mt-8 text-center">
+            <button 
+              onClick={() => setRequiresMFA(false)}
+              className="text-sm text-gray-400 hover:text-white transition-colors"
+            >
+              Retour à la page de connexion
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Regular login form
   return (
     <div className="min-h-screen flex items-center justify-center bg-graphik-dark px-4 py-12">
       <div className="w-full max-w-md">

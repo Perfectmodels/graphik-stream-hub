@@ -18,6 +18,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Subscribe from "./pages/Subscribe";
+import MFASetup from "./pages/MFASetup";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -45,6 +46,7 @@ const App = () => (
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/subscribe" element={<Subscribe />} />
+          <Route path="/mfa-setup" element={<MFASetup />} />
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

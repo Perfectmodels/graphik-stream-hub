@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
@@ -19,6 +20,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showMFADialog, setShowMFADialog] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -72,16 +74,22 @@ const Register = () => {
         });
 
         if (profileError) console.error("Erreur lors de la création du profil:", profileError);
+        
+        // Create default MFA settings (disabled by default)
+        await supabase.from('user_mfa_settings').insert({
+          user_id: authData.user.id,
+          email_mfa_enabled: false,
+        });
       }
 
       toast({
         title: "Inscription réussie",
-        description: "Bienvenue sur Graphik'Studio ! Vous pouvez maintenant vous connecter.",
+        description: "Bienvenue sur Graphik'Studio !",
         duration: 3000,
       });
 
-      // Rediriger vers la page de connexion
-      navigate('/login');
+      // Show MFA setup dialog
+      setShowMFADialog(true);
       
     } catch (error: any) {
       toast({
@@ -275,6 +283,52 @@ const Register = () => {
           </Link>
         </div>
       </div>
+
+      {/* MFA Setup Dialog */}
+      <Dialog open={showMFADialog} onOpenChange={setShowMFADialog}>
+        <DialogContent className="bg-graphik-grey border-graphik-light-grey text-white sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-white flex items-center gap-2">
+              <Shield className="h-5 w-5 text-graphik-blue" />
+              Sécurisez votre compte
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              Activez l'authentification à deux facteurs pour une sécurité renforcée
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-white mb-4">
+              L'authentification à deux facteurs (A2F) ajoute une couche de sécurité supplémentaire à votre compte en demandant une vérification supplémentaire lorsque vous vous connectez.
+            </p>
+            <p className="text-gray-400">
+              Souhaitez-vous configurer l'authentification à deux facteurs maintenant ?
+            </p>
+          </div>
+          
+          <DialogFooter className="flex-col sm:flex-row sm:justify-between gap-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowMFADialog(false);
+                navigate('/login');
+              }}
+              className="border-graphik-light-grey text-white hover:bg-graphik-light-grey/10"
+            >
+              Pas maintenant
+            </Button>
+            <Button
+              onClick={() => {
+                setShowMFADialog(false);
+                navigate('/mfa-setup');
+              }}
+              className="bg-graphik-blue hover:bg-graphik-blue/80"
+            >
+              Configurer l'A2F
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
