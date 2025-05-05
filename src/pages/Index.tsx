@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { 
   Play, Headphones, Tv, Gamepad2, ShieldCheck, 
-  CreditCard, Support, Clock 
+  CreditCard, HelpCircle, Clock 
 } from "lucide-react";
 
 const Index = () => {
@@ -93,7 +93,7 @@ const Index = () => {
 
               <div className="bg-graphik-dark p-6 rounded-xl border border-graphik-light-grey">
                 <div className="bg-graphik-blue/20 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
-                  <Support className="text-graphik-blue w-7 h-7" />
+                  <HelpCircle className="text-graphik-blue w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-2">Support 24/7</h3>
                 <p className="text-gray-300">
