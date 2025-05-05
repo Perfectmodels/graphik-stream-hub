@@ -2,27 +2,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { Search, CreditCard, Check, X } from "lucide-react";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AdminLayout from "@/components/admin/AdminLayout";
-
-type Subscription = {
-  id: number;
-  full_name: string;
-  email: string;
-  phone: string;
-  service_type: string;
-  status: 'pending' | 'approved' | 'rejected';
-  total_price: number;
-  created_at: string;
-  start_date: string;
-  end_date: string;
-  duration_months: number;
-}
+import SubscriptionSearch from "@/components/admin/SubscriptionSearch";
+import SubscriptionTable, { Subscription } from "@/components/admin/SubscriptionTable";
 
 const AdminSubscriptions = () => {
   const [loading, setLoading] = useState(true);
@@ -136,31 +121,6 @@ const AdminSubscriptions = () => {
     sub.status?.includes(searchTerm.toLowerCase())
   );
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return (
-          <div className="bg-amber-500/20 text-amber-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
-            En attente
-          </div>
-        );
-      case 'approved':
-        return (
-          <div className="bg-green-500/20 text-green-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
-            Approuvé
-          </div>
-        );
-      case 'rejected':
-        return (
-          <div className="bg-red-500/20 text-red-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
-            Rejeté
-          </div>
-        );
-      default:
-        return status;
-    }
-  };
-
   return (
     <AdminLayout>
       <h2 className="text-2xl font-bold mb-6 flex items-center">
@@ -168,25 +128,10 @@ const AdminSubscriptions = () => {
         Gestion des abonnements
       </h2>
 
-      <Card className="bg-graphik-grey border-graphik-light-grey mb-6">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-white">Rechercher</CardTitle>
-          <CardDescription className="text-gray-400">
-            Filtrer les demandes par nom, email, service ou statut
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Rechercher un abonnement..."
-              className="pl-10 bg-graphik-dark border-graphik-light-grey text-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <SubscriptionSearch 
+        searchTerm={searchTerm} 
+        setSearchTerm={setSearchTerm} 
+      />
 
       <Card className="bg-graphik-grey border-graphik-light-grey overflow-hidden">
         <CardHeader>
@@ -197,71 +142,14 @@ const AdminSubscriptions = () => {
             </span>
           </CardTitle>
         </CardHeader>
-        <div className="overflow-x-auto">
-          {loading ? (
-            <div className="text-center py-8 text-gray-400">Chargement des abonnements...</div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow className="border-graphik-light-grey hover:bg-graphik-light-grey/10">
-                  <TableHead className="text-white">Client</TableHead>
-                  <TableHead className="text-white">Service</TableHead>
-                  <TableHead className="text-white">Statut</TableHead>
-                  <TableHead className="text-white">Prix</TableHead>
-                  <TableHead className="text-white">Durée</TableHead>
-                  <TableHead className="text-white">Date de demande</TableHead>
-                  <TableHead className="text-white">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSubscriptions.map((sub) => (
-                  <TableRow key={sub.id} className="border-graphik-light-grey hover:bg-graphik-light-grey/10">
-                    <TableCell className="font-medium text-white">
-                      <div>{sub.full_name}</div>
-                      <div className="text-xs text-gray-400">{sub.email}</div>
-                    </TableCell>
-                    <TableCell className="text-gray-300">{sub.service_type}</TableCell>
-                    <TableCell>{getStatusBadge(sub.status)}</TableCell>
-                    <TableCell className="text-gray-300">{sub.total_price} FCFA</TableCell>
-                    <TableCell className="text-gray-300">{sub.duration_months} mois</TableCell>
-                    <TableCell className="text-gray-300">
-                      {new Date(sub.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-green-500 text-green-500 hover:bg-green-500/20"
-                          onClick={() => updateSubscriptionStatus(sub.id, 'approved')}
-                          disabled={sub.status !== 'pending' || processingIds.includes(sub.id)}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="border-red-500 text-red-500 hover:bg-red-500/20"
-                          onClick={() => updateSubscriptionStatus(sub.id, 'rejected')}
-                          disabled={sub.status !== 'pending' || processingIds.includes(sub.id)}
-                        >
-                          <X className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {filteredSubscriptions.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-400">
-                      {searchTerm ? "Aucun abonnement ne correspond à votre recherche" : "Aucune demande d'abonnement trouvée"}
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          )}
-        </div>
+        
+        <SubscriptionTable 
+          loading={loading}
+          filteredSubscriptions={filteredSubscriptions}
+          processingIds={processingIds}
+          updateSubscriptionStatus={updateSubscriptionStatus}
+          searchTerm={searchTerm}
+        />
       </Card>
     </AdminLayout>
   );
