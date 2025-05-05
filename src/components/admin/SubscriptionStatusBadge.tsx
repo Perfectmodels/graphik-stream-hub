@@ -25,6 +25,24 @@ const SubscriptionStatusBadge: React.FC<SubscriptionStatusBadgeProps> = ({ statu
           Rejeté
         </div>
       );
+    case 'active':
+      return (
+        <div className="bg-blue-500/20 text-blue-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
+          Actif
+        </div>
+      );
+    case 'expired':
+      return (
+        <div className="bg-gray-500/20 text-gray-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
+          Expiré
+        </div>
+      );
+    case 'suspended':
+      return (
+        <div className="bg-purple-500/20 text-purple-500 px-2 py-1 rounded-full text-xs inline-flex items-center">
+          Suspendu
+        </div>
+      );
     default:
       return <span>{status}</span>;
   }

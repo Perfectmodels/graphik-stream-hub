@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      admin_notes: {
+        Row: {
+          admin_id: string
+          created_at: string
+          id: number
+          note: string
+          subscription_id: number
+        }
+        Insert: {
+          admin_id: string
+          created_at?: string
+          id?: number
+          note: string
+          subscription_id: number
+        }
+        Update: {
+          admin_id?: string
+          created_at?: string
+          id?: number
+          note?: string
+          subscription_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "admin_notes_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       admin_users: {
         Row: {
           created_at: string | null
@@ -24,6 +56,148 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: number
+          payment_date: string | null
+          payment_method: string
+          payment_status: string
+          subscription_id: number
+          transaction_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: number
+          payment_date?: string | null
+          payment_method: string
+          payment_status?: string
+          subscription_id: number
+          transaction_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: number
+          payment_date?: string | null
+          payment_method?: string
+          payment_status?: string
+          subscription_id?: number
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      promo_codes: {
+        Row: {
+          code: string
+          created_at: string
+          current_uses: number
+          discount_percentage: number | null
+          id: number
+          max_uses: number | null
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage?: number | null
+          id?: number
+          max_uses?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          current_uses?: number
+          discount_percentage?: number | null
+          id?: number
+          max_uses?: number | null
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: []
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon_name: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon_name?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      services: {
+        Row: {
+          active: boolean
+          base_price: number
+          category_id: number | null
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: number
+          image_url: string | null
+          name: string
+        }
+        Insert: {
+          active?: boolean
+          base_price: number
+          category_id?: number | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: number
+          image_url?: string | null
+          name: string
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          category_id?: number | null
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: number
+          image_url?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_requests: {
         Row: {
           additional_info: string | null
@@ -36,6 +210,7 @@ export type Database = {
           id: number
           payment_method: string
           phone: string
+          promo_code_id: number | null
           service_type: string
           start_date: string
           status: string
@@ -54,6 +229,7 @@ export type Database = {
           id?: number
           payment_method: string
           phone: string
+          promo_code_id?: number | null
           service_type: string
           start_date: string
           status?: string
@@ -72,6 +248,7 @@ export type Database = {
           id?: number
           payment_method?: string
           phone?: string
+          promo_code_id?: number | null
           service_type?: string
           start_date?: string
           status?: string
@@ -79,7 +256,15 @@ export type Database = {
           updated_at?: string | null
           user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "subscription_requests_promo_code_id_fkey"
+            columns: ["promo_code_id"]
+            isOneToOne: false
+            referencedRelation: "promo_codes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profiles: {
         Row: {
