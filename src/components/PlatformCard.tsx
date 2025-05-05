@@ -1,0 +1,54 @@
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+
+interface PlatformCardProps {
+  name: string;
+  logo: string;
+  description: string;
+  price?: string;
+  features?: string[];
+  buttonText?: string;
+  buttonAction?: () => void;
+}
+
+const PlatformCard: React.FC<PlatformCardProps> = ({
+  name,
+  logo,
+  description,
+  price,
+  features,
+  buttonText = "S'abonner",
+  buttonAction,
+}) => {
+  return (
+    <div className="service-card h-full flex flex-col">
+      <div className="p-6 flex items-center justify-center bg-graphik-dark/50">
+        <img src={logo} alt={name} className="h-16 object-contain" />
+      </div>
+      <div className="p-6 flex-grow flex flex-col">
+        <h3 className="text-xl font-bold text-white mb-2">{name}</h3>
+        <p className="text-gray-300 mb-4">{description}</p>
+        {price && <p className="text-graphik-blue font-bold mb-4">{price}</p>}
+        {features && (
+          <ul className="mb-4 space-y-2 flex-grow">
+            {features.map((feature, index) => (
+              <li key={index} className="text-gray-300 text-sm flex items-start">
+                <span className="text-graphik-blue mr-2">✓</span>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        <Button 
+          onClick={buttonAction} 
+          className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mt-auto"
+        >
+          {buttonText}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+export default PlatformCard;
