@@ -33,7 +33,7 @@ const Login = () => {
     try {
       setLoading(true);
 
-      // Admin direct check (hard-coded for testing purposes)
+      // Admin direct check
       if (email === "contact@graphikstudio.pro" && password === "PMM2025@") {
         toast({
           title: "Connexion réussie",

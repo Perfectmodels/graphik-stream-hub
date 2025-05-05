@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Register = () => {
   const [firstName, setFirstName] = useState("");
@@ -17,12 +18,13 @@ const Register = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+    
     if (password !== confirmPassword) {
       toast({
         title: "Erreur",
@@ -43,12 +45,54 @@ const Register = () => {
       return;
     }
 
-    toast({
-      title: "Inscription réussie",
-      description: "Bienvenue sur Graphik'Studio !",
-      duration: 3000,
-    });
-    navigate('/');
+    setLoading(true);
+
+    try {
+      // Inscription avec Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            first_name: firstName,
+            last_name: lastName,
+            full_name: `${firstName} ${lastName}`
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      // Création du profil utilisateur
+      if (authData.user) {
+        const { error: profileError } = await supabase.from('user_profiles').insert({
+          id: authData.user.id,
+          full_name: `${firstName} ${lastName}`,
+          email: email,
+        });
+
+        if (profileError) console.error("Erreur lors de la création du profil:", profileError);
+      }
+
+      toast({
+        title: "Inscription réussie",
+        description: "Bienvenue sur Graphik'Studio ! Vous pouvez maintenant vous connecter.",
+        duration: 3000,
+      });
+
+      // Rediriger vers la page de connexion
+      navigate('/login');
+      
+    } catch (error: any) {
+      toast({
+        title: "Erreur d'inscription",
+        description: error.message || "Une erreur est survenue lors de l'inscription",
+        variant: "destructive",
+        duration: 3000,
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,6 +124,7 @@ const Register = () => {
                   placeholder="Prénom"
                   required
                   className="bg-graphik-dark border-graphik-light-grey text-white"
+                  disabled={loading}
                 />
               </div>
 
@@ -94,6 +139,7 @@ const Register = () => {
                   placeholder="Nom"
                   required
                   className="bg-graphik-dark border-graphik-light-grey text-white"
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -110,6 +156,7 @@ const Register = () => {
                 placeholder="nom@example.com"
                 required
                 className="bg-graphik-dark border-graphik-light-grey text-white"
+                disabled={loading}
               />
             </div>
 
@@ -126,11 +173,13 @@ const Register = () => {
                   placeholder="••••••••"
                   required
                   className="bg-graphik-dark border-graphik-light-grey text-white pr-10"
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -153,11 +202,13 @@ const Register = () => {
                   placeholder="••••••••"
                   required
                   className="bg-graphik-dark border-graphik-light-grey text-white pr-10"
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  disabled={loading}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -170,6 +221,7 @@ const Register = () => {
                 checked={acceptTerms}
                 onCheckedChange={(checked) => setAcceptTerms(!!checked)}
                 className="mt-1"
+                disabled={loading}
               />
               <label
                 htmlFor="terms"
@@ -195,8 +247,9 @@ const Register = () => {
             <Button
               type="submit"
               className="w-full bg-graphik-blue hover:bg-graphik-blue/80"
+              disabled={loading}
             >
-              S'inscrire
+              {loading ? "Inscription en cours..." : "S'inscrire"}
             </Button>
           </form>
 
