@@ -100,10 +100,8 @@ const ServiceSelectionFields: React.FC<ServiceSelectionFieldsProps> = ({ form, d
                 </SelectTrigger>
               </FormControl>
               <SelectContent className="bg-graphik-dark border-graphik-light-grey text-white">
-                <SelectItem value="Mobile Money">Mobile Money</SelectItem>
-                <SelectItem value="Carte bancaire">Carte bancaire</SelectItem>
-                <SelectItem value="Virement bancaire">Virement bancaire</SelectItem>
-                <SelectItem value="Espèces">Espèces</SelectItem>
+                <SelectItem value="Airtel Money">Airtel Money</SelectItem>
+                <SelectItem value="Moov Money">Moov Money</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
