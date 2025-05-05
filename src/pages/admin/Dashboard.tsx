@@ -2,7 +2,7 @@
 import React from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import SubscriptionStats from "@/components/admin/SubscriptionStats";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import DashboardWelcomeCard from "@/components/admin/DashboardWelcomeCard";
 
 const AdminDashboard = () => {
   return (
@@ -12,19 +12,7 @@ const AdminDashboard = () => {
         
         <SubscriptionStats />
         
-        <Card className="bg-graphik-grey border-graphik-light-grey">
-          <CardHeader>
-            <CardTitle className="text-white">Bienvenue dans le tableau de bord administrateur</CardTitle>
-            <CardDescription className="text-gray-400">
-              Consultez les statistiques d'abonnements ci-dessus et utilisez les modules dans le menu latéral pour gérer les différents aspects de l'application.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <p className="text-gray-300">
-              Vous pouvez accéder à la gestion des utilisateurs, des abonnements et des paramètres via la barre latérale.
-            </p>
-          </CardContent>
-        </Card>
+        <DashboardWelcomeCard />
       </div>
     </AdminLayout>
   );
