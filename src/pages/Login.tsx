@@ -7,23 +7,74 @@ import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    toast({
-      title: "Connexion réussie",
-      description: "Bienvenue sur Graphik'Studio !",
-      duration: 3000,
-    });
-    navigate('/');
+    
+    if (!email || !password) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez remplir tous les champs",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
+      // Check if user is admin
+      if (data?.user) {
+        const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
+          user_id: data.user.id
+        });
+        
+        if (!adminError && adminData === true) {
+          toast({
+            title: "Connexion réussie",
+            description: "Bienvenue dans l'interface d'administration !",
+            duration: 3000,
+          });
+          navigate('/admin/dashboard');
+          return;
+        }
+      }
+      
+      toast({
+        title: "Connexion réussie",
+        description: "Bienvenue sur Graphik'Studio !",
+        duration: 3000,
+      });
+      navigate('/');
+      
+    } catch (error: any) {
+      toast({
+        title: "Erreur de connexion",
+        description: error.message || "Une erreur est survenue lors de la connexion",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,6 +106,7 @@ const Login = () => {
                 placeholder="nom@example.com"
                 required
                 className="bg-graphik-dark border-graphik-light-grey text-white"
+                disabled={loading}
               />
             </div>
 
@@ -79,11 +131,13 @@ const Login = () => {
                   placeholder="••••••••"
                   required
                   className="bg-graphik-dark border-graphik-light-grey text-white pr-10"
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
+                  disabled={loading}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
@@ -95,6 +149,7 @@ const Login = () => {
                 id="remember"
                 checked={rememberMe}
                 onCheckedChange={(checked) => setRememberMe(!!checked)}
+                disabled={loading}
               />
               <label
                 htmlFor="remember"
@@ -107,8 +162,9 @@ const Login = () => {
             <Button
               type="submit"
               className="w-full bg-graphik-blue hover:bg-graphik-blue/80"
+              disabled={loading}
             >
-              Se connecter
+              {loading ? "Connexion en cours..." : "Se connecter"}
             </Button>
           </form>
 
