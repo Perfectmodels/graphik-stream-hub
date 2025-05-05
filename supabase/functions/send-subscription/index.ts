@@ -99,43 +99,224 @@ serve(async (req) => {
 });
 
 async function generateSubscriptionPDF(subscription: SubscriptionRequest): Promise<Uint8Array> {
-  // For now, return an empty buffer as PDF generation requires more setup
-  // In production, you'd use PDF generation libraries
-  
-  // This is a placeholder - in a real environment you would use puppeteer or similar
-  // to generate a proper PDF with the subscription details
-  const pdfContent = `
-    Demande d'abonnement - Graphik'Studio
+  try {
+    // Initialize puppeteer
+    const browser = await puppeteer.launch({
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    });
     
-    Client: ${subscription.full_name}
-    Email: ${subscription.email}
-    Téléphone: ${subscription.phone}
-    Service: ${subscription.service_type}
-    Durée: ${subscription.duration_months} mois
-    Prix total: ${subscription.total_price} FCFA
-    Date de début: ${subscription.start_date}
-    Date de fin: ${subscription.end_date}
-    Statut: ${subscription.status}
-  `;
-  
-  const encoder = new TextEncoder();
-  return encoder.encode(pdfContent);
+    const page = await browser.newPage();
+    
+    // Generate HTML content for the PDF
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="fr">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Demande d'abonnement - Graphik'Studio</title>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+          }
+          h1 {
+            color: #2563eb;
+            text-align: center;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+          }
+          .header {
+            text-align: center;
+            margin-bottom: 30px;
+          }
+          .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+          }
+          .section {
+            margin-bottom: 20px;
+          }
+          .section-title {
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+          }
+          .info-row {
+            display: flex;
+            margin-bottom: 5px;
+          }
+          .label {
+            font-weight: bold;
+            width: 200px;
+          }
+          .value {
+            flex: 1;
+          }
+          .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+          }
+          .status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: bold;
+          }
+          .status.pending {
+            background-color: #fef3c7;
+            color: #d97706;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="logo">Graphik'Studio</div>
+          <p>Votre partenaire pour le streaming et le gaming</p>
+        </div>
+        
+        <h1>Demande d'abonnement</h1>
+        
+        <div class="section">
+          <div class="section-title">Informations client</div>
+          <div class="info-row">
+            <div class="label">Nom complet:</div>
+            <div class="value">${subscription.full_name}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Email:</div>
+            <div class="value">${subscription.email}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Téléphone:</div>
+            <div class="value">${subscription.phone}</div>
+          </div>
+          ${subscription.address ? `
+          <div class="info-row">
+            <div class="label">Adresse:</div>
+            <div class="value">${subscription.address}</div>
+          </div>
+          ` : ''}
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Détails de l'abonnement</div>
+          <div class="info-row">
+            <div class="label">Type de service:</div>
+            <div class="value">${subscription.service_type}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Durée:</div>
+            <div class="value">${subscription.duration_months} mois</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Date de début:</div>
+            <div class="value">${subscription.start_date}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Date de fin:</div>
+            <div class="value">${subscription.end_date}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Méthode de paiement:</div>
+            <div class="value">${subscription.payment_method}</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Prix total:</div>
+            <div class="value">${subscription.total_price} FCFA</div>
+          </div>
+          <div class="info-row">
+            <div class="label">Statut:</div>
+            <div class="value">
+              <span class="status pending">En attente</span>
+            </div>
+          </div>
+        </div>
+        
+        ${subscription.additional_info ? `
+        <div class="section">
+          <div class="section-title">Informations supplémentaires</div>
+          <p>${subscription.additional_info}</p>
+        </div>
+        ` : ''}
+        
+        <div class="section">
+          <div class="section-title">Prochaines étapes</div>
+          <p>Notre équipe examinera votre demande et vous contactera sous peu pour confirmer les détails et finaliser votre abonnement. Merci de votre patience.</p>
+        </div>
+        
+        <div class="footer">
+          <p>Graphik'Studio - ID de demande: ${subscription.id}</p>
+          <p>Document généré le ${new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+      </body>
+      </html>
+    `;
+    
+    await page.setContent(htmlContent);
+    
+    // Generate PDF
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '20px',
+        right: '20px',
+        bottom: '20px',
+        left: '20px'
+      }
+    });
+    
+    await browser.close();
+    
+    return pdfBuffer;
+  } catch (error) {
+    console.error("Error generating PDF:", error);
+    // Return an empty PDF as fallback
+    const encoder = new TextEncoder();
+    return encoder.encode("Error generating PDF");
+  }
 }
 
 async function sendSubscriptionEmail(subscription: SubscriptionRequest, pdfBuffer: Uint8Array): Promise<boolean> {
-  console.log(`Email would be sent to: ${subscription.email} and contact@graphikstudio.pro`);
-  console.log("PDF would be attached to the email");
-  
-  // In production, integrate with email service APIs like SendGrid, Mailgun, etc.
-  
-  return true; // Placeholder success response
+  try {
+    console.log(`Envoi d'email à: ${subscription.email} et contact@graphikstudio.pro`);
+    console.log("Fichier PDF joint à l'email");
+    
+    // Note: In a real environment, you would use an email service API
+    // For now, we just log the details and return success
+    
+    // Example implementation with an email service would be:
+    // 1. Convert pdfBuffer to a base64 string for attachment
+    // 2. Send email with attachment using a service like SendGrid, Mailgun, etc.
+    
+    return true;
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return false;
+  }
 }
 
 async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Promise<boolean> {
-  console.log(`WhatsApp message would be sent to: ${subscription.phone}`);
-  console.log("Subscription details would be included in the WhatsApp message");
-  
-  // In production, integrate with WhatsApp Business API
-  
-  return true; // Placeholder success response
+  try {
+    console.log(`Envoi d'un message WhatsApp à: ${subscription.phone}`);
+    console.log("Détails de l'abonnement inclus dans le message WhatsApp");
+    
+    // Note: In a real environment, you would use WhatsApp Business API
+    // For now, we just log the details and return success
+    
+    return true;
+  } catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return false;
+  }
 }

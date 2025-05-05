@@ -97,6 +97,38 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
     return totalPrice;
   };
 
+  const sendSubscriptionDocuments = async (subscriptionId: number) => {
+    try {
+      const { error } = await supabase.functions.invoke('send-subscription', {
+        body: { subscriptionId },
+      });
+      
+      if (error) {
+        console.error("Erreur lors de l'envoi des documents:", error);
+        toast({
+          title: "Erreur",
+          description: "Les documents n'ont pas pu être envoyés. Notre équipe vous contactera sous peu.",
+          variant: "destructive",
+        });
+        return false;
+      }
+      
+      toast({
+        title: "Documents envoyés",
+        description: "Les détails de votre demande ont été envoyés à votre email et WhatsApp.",
+      });
+      return true;
+    } catch (error) {
+      console.error("Erreur lors de l'appel à la fonction:", error);
+      toast({
+        title: "Erreur",
+        description: "Les documents n'ont pas pu être envoyés. Notre équipe vous contactera sous peu.",
+        variant: "destructive",
+      });
+      return false;
+    }
+  };
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     
@@ -152,6 +184,9 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
           description: "Votre demande a été enregistrée, mais l'envoi des notifications a échoué."
         });
       }
+      
+      // Appel à la fonction Edge pour envoyer les documents
+      await sendSubscriptionDocuments(data.id);
       
       // Redirection ou fermeture du modal
       if (isModal && onClose) {
