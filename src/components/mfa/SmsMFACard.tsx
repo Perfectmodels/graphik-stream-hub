@@ -26,6 +26,10 @@ interface SmsMFACardProps {
   }, any>;
 }
 
+const phoneSchema = z.object({
+  phoneNumber: z.string().min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres")
+});
+
 const SmsMFACard: React.FC<SmsMFACardProps> = ({
   user,
   smsMFAEnabled,
@@ -154,7 +158,7 @@ const SmsMFACard: React.FC<SmsMFACardProps> = ({
     }
   };
 
-  const onSubmitPhoneForm = async (values: z.infer<{ phoneNumber: string }>) => {
+  const onSubmitPhoneForm = async (values: z.infer<typeof phoneSchema>) => {
     await sendVerificationSMS(values.phoneNumber);
   };
 
