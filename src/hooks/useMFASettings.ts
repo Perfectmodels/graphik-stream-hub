@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { isUserMFASettings } from "@/types/supabase-extensions";
 
 const phoneSchema = z.object({
-  phoneNumber: z.string().min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres")
+  phoneNumber: z.string().min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres").optional()
 });
 
 export const useMFASettings = () => {

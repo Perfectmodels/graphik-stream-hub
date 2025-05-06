@@ -27,7 +27,7 @@ interface SmsMFACardProps {
 }
 
 const phoneSchema = z.object({
-  phoneNumber: z.string().min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres")
+  phoneNumber: z.string().min(10, "Le numéro de téléphone doit contenir au moins 10 chiffres").optional()
 });
 
 const SmsMFACard: React.FC<SmsMFACardProps> = ({
