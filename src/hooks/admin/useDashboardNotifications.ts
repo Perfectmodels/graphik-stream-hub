@@ -10,6 +10,7 @@ export type DashboardNotification = {
   notification_type: 'info' | 'warning' | 'alert' | 'success';
   is_read: boolean;
   created_at: string;
+  admin_id?: string;
 };
 
 export const useDashboardNotifications = () => {
@@ -29,7 +30,13 @@ export const useDashboardNotifications = () => {
       
       if (error) throw error;
       
-      setNotifications(data || []);
+      // Conversion explicite des données pour correspondre au type DashboardNotification
+      const typedNotifications: DashboardNotification[] = data?.map(item => ({
+        ...item,
+        notification_type: item.notification_type as 'info' | 'warning' | 'alert' | 'success'
+      })) || [];
+      
+      setNotifications(typedNotifications);
     } catch (error) {
       console.error("Erreur lors du chargement des notifications:", error);
       toast({

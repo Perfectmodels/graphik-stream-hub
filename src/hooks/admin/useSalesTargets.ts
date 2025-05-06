@@ -32,7 +32,13 @@ export const useSalesTargets = () => {
       
       if (error) throw error;
       
-      setTargets(data || []);
+      // Conversion explicite des données pour correspondre au type SalesTarget
+      const typedTargets: SalesTarget[] = data?.map(item => ({
+        ...item,
+        target_period: item.target_period as 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+      })) || [];
+      
+      setTargets(typedTargets);
     } catch (error) {
       console.error("Erreur lors du chargement des objectifs:", error);
       toast({
@@ -88,16 +94,23 @@ export const useSalesTargets = () => {
       if (error) throw error;
       
       if (data && data.length > 0) {
-        // Mise à jour de l'état local
-        setTargets(prev => [...prev, data[0]]);
+        // Conversion explicite des données pour correspondre au type SalesTarget
+        const newTarget: SalesTarget = {
+          ...data[0],
+          target_period: data[0].target_period as 'daily' | 'weekly' | 'monthly' | 'quarterly' | 'yearly'
+        };
+        
+        // Mise à jour de l'état local avec le nouvel objectif typé correctement
+        setTargets(prev => [...prev, newTarget]);
         
         toast({
           title: "Objectif créé",
           description: "Un nouvel objectif a été créé avec succès",
         });
         
-        return data[0];
+        return newTarget;
       }
+      return null;
     } catch (error) {
       console.error("Erreur lors de la création de l'objectif:", error);
       toast({

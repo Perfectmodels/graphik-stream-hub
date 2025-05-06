@@ -8,6 +8,8 @@ export type StatData = {
   pending: number;
   approved: number;
   rejected: number;
+  active: number; // Ajout de la propriété manquante
+  suspended: number; // Pour compléter le modèle de données
   byService: Record<string, number>;
   byDuration: Record<string, number>;
   monthlyRevenue: Record<string, number>;
@@ -20,6 +22,8 @@ export const useSubscriptionStats = () => {
     pending: 0,
     approved: 0,
     rejected: 0,
+    active: 0, // Initialisation de la propriété manquante
+    suspended: 0, // Pour compléter le modèle de données
     byService: {},
     byDuration: {},
     monthlyRevenue: {},
@@ -39,11 +43,13 @@ export const useSubscriptionStats = () => {
       if (error) throw error;
       
       // Process data for stats
-      const stats: StatData = {
+      const statsCopy: StatData = {
         total: subscriptions?.length || 0,
         pending: 0,
         approved: 0, 
         rejected: 0,
+        active: 0, // Initialisation de la propriété active
+        suspended: 0, // Pour compléter le modèle de données
         byService: {},
         byDuration: {},
         monthlyRevenue: {},
@@ -52,23 +58,25 @@ export const useSubscriptionStats = () => {
       // Process each subscription
       subscriptions?.forEach(sub => {
         // Status counts
-        if (sub.status === 'pending') stats.pending++;
-        else if (sub.status === 'approved') stats.approved++;
-        else if (sub.status === 'rejected') stats.rejected++;
+        if (sub.status === 'pending') statsCopy.pending++;
+        else if (sub.status === 'approved') statsCopy.approved++;
+        else if (sub.status === 'rejected') statsCopy.rejected++;
+        else if (sub.status === 'active') statsCopy.active++;
+        else if (sub.status === 'suspended') statsCopy.suspended++;
         
         // Service type counts
-        if (stats.byService[sub.service_type]) {
-          stats.byService[sub.service_type]++;
+        if (statsCopy.byService[sub.service_type]) {
+          statsCopy.byService[sub.service_type]++;
         } else {
-          stats.byService[sub.service_type] = 1;
+          statsCopy.byService[sub.service_type] = 1;
         }
         
         // Duration counts
         const duration = `${sub.duration_months} mois`;
-        if (stats.byDuration[duration]) {
-          stats.byDuration[duration]++;
+        if (statsCopy.byDuration[duration]) {
+          statsCopy.byDuration[duration]++;
         } else {
-          stats.byDuration[duration] = 1;
+          statsCopy.byDuration[duration] = 1;
         }
         
         // Monthly revenue - group by month
@@ -76,15 +84,15 @@ export const useSubscriptionStats = () => {
           const date = new Date(sub.created_at);
           const monthYear = `${date.getMonth() + 1}/${date.getFullYear()}`;
           
-          if (stats.monthlyRevenue[monthYear]) {
-            stats.monthlyRevenue[monthYear] += Number(sub.total_price) || 0;
+          if (statsCopy.monthlyRevenue[monthYear]) {
+            statsCopy.monthlyRevenue[monthYear] += Number(sub.total_price) || 0;
           } else {
-            stats.monthlyRevenue[monthYear] = Number(sub.total_price) || 0;
+            statsCopy.monthlyRevenue[monthYear] = Number(sub.total_price) || 0;
           }
         }
       });
       
-      setStats(stats);
+      setStats(statsCopy);
     } catch (error) {
       console.error("Error fetching subscription stats:", error);
       toast({

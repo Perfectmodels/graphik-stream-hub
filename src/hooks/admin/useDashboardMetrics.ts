@@ -31,7 +31,13 @@ export const useDashboardMetrics = () => {
       
       if (error) throw error;
       
-      setMetrics(data || []);
+      // Conversion explicite des données pour correspondre au type DashboardMetric
+      const typedMetrics: DashboardMetric[] = data?.map(item => ({
+        ...item,
+        metric_period: item.metric_period as 'daily' | 'weekly' | 'monthly' | 'yearly'
+      })) || [];
+      
+      setMetrics(typedMetrics);
     } catch (error) {
       console.error("Erreur lors du chargement des métriques:", error);
       toast({
