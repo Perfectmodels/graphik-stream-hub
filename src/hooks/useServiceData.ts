@@ -10,7 +10,7 @@ export const useServiceData = () => {
     try {
       const { data, error } = await supabase
         .from('services')
-        .select('id, name, description, base_price, category_id')
+        .select('id, name, description, base_price, category_id, active, featured, image_url')
         .order('name');
         
       if (error) throw error;

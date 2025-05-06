@@ -7,6 +7,7 @@ import SubscriptionSearch from "@/components/admin/SubscriptionSearch";
 import SubscriptionTable from "@/components/admin/SubscriptionTable";
 import { useSubscriptions } from "@/hooks/useSubscriptions";
 import { Subscription } from "@/types/subscription";
+import DetailedStatCards from "@/components/admin/stats/DetailedStatCards";
 
 const AdminSubscriptions = () => {
   const {
@@ -35,13 +36,25 @@ const AdminSubscriptions = () => {
       sub.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) || 
       sub.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       sub.service_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      sub.status?.includes(searchTerm.toLowerCase());
+      sub.status?.includes(searchTerm.toLowerCase()) ||
+      (sub.phone && sub.phone.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesStatus = !statusFilter || sub.status === statusFilter;
     const matchesService = !serviceFilter || sub.service_type === serviceFilter;
     
     return matchesSearch && matchesStatus && matchesService;
   });
+
+  // Calculer les statistiques pour les cartes
+  const stats = {
+    total: subscriptions.length,
+    pending: subscriptions.filter(sub => sub.status === 'pending').length,
+    approved: subscriptions.filter(sub => sub.status === 'approved').length,
+    rejected: subscriptions.filter(sub => sub.status === 'rejected').length,
+    active: subscriptions.filter(sub => sub.status === 'active').length,
+    suspended: subscriptions.filter(sub => sub.status === 'suspended').length,
+    expired: subscriptions.filter(sub => sub.status === 'expired').length,
+  };
 
   return (
     <AdminLayout>
@@ -50,35 +63,47 @@ const AdminSubscriptions = () => {
         Gestion des abonnements
       </h2>
 
-      <SubscriptionSearch 
-        searchTerm={searchTerm} 
-        setSearchTerm={setSearchTerm} 
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        serviceFilter={serviceFilter}
-        setServiceFilter={setServiceFilter}
-        services={services}
+      <DetailedStatCards
+        total={stats.total}
+        pending={stats.pending}
+        approved={stats.approved}
+        rejected={stats.rejected}
+        active={stats.active}
+        suspended={stats.suspended}
+        expired={stats.expired}
       />
 
-      <Card className="bg-graphik-grey border-graphik-light-grey overflow-hidden">
-        <CardHeader>
-          <CardTitle className="text-white flex items-center justify-between">
-            <span>Demandes d'abonnements</span>
-            <span className="text-sm font-normal bg-graphik-blue/20 text-graphik-blue px-2 py-1 rounded">
-              {filteredSubscriptions.length} demande(s)
-            </span>
-          </CardTitle>
-        </CardHeader>
-        
-        <SubscriptionTable 
-          loading={loading}
-          filteredSubscriptions={filteredSubscriptions}
-          processingIds={processingIds}
-          updateSubscriptionStatus={updateSubscriptionStatus}
-          addNote={addNote}
-          searchTerm={searchTerm}
+      <div className="mt-6">
+        <SubscriptionSearch 
+          searchTerm={searchTerm} 
+          setSearchTerm={setSearchTerm} 
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
+          serviceFilter={serviceFilter}
+          setServiceFilter={setServiceFilter}
+          services={services}
         />
-      </Card>
+
+        <Card className="bg-graphik-grey border-graphik-light-grey overflow-hidden">
+          <CardHeader>
+            <CardTitle className="text-white flex items-center justify-between">
+              <span>Demandes d'abonnements</span>
+              <span className="text-sm font-normal bg-graphik-blue/20 text-graphik-blue px-2 py-1 rounded">
+                {filteredSubscriptions.length} demande(s)
+              </span>
+            </CardTitle>
+          </CardHeader>
+          
+          <SubscriptionTable 
+            loading={loading}
+            filteredSubscriptions={filteredSubscriptions}
+            processingIds={processingIds}
+            updateSubscriptionStatus={updateSubscriptionStatus}
+            addNote={addNote}
+            searchTerm={searchTerm}
+          />
+        </Card>
+      </div>
     </AdminLayout>
   );
 };

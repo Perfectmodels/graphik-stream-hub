@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Subscription } from "@/types/subscription";
+import { Subscription, PaymentStatus } from "@/types/subscription";
 
 export const useSubscriptionData = () => {
   const [loading, setLoading] = useState(true);
@@ -62,14 +62,15 @@ export const useSubscriptionData = () => {
           email: item.email,
           phone: item.phone,
           service_type: item.service_type,
-          status: item.status as 'pending' | 'approved' | 'rejected' | 'active' | 'expired' | 'suspended',
+          status: item.status as SubscriptionStatus,
           total_price: item.total_price,
           created_at: item.created_at || "",
           start_date: item.start_date || "",
           end_date: item.end_date || "",
           duration_months: item.duration_months,
           has_payment: item.payments && item.payments.length > 0,
-          payment_status: item.payments && item.payments.length > 0 ? item.payments[0].payment_status : null,
+          payment_status: (item.payments && item.payments.length > 0 ? 
+            item.payments[0].payment_status as PaymentStatus : null),
           has_notes: item.admin_notes && item.admin_notes.length > 0,
           payment_method: item.payment_method,
           address: item.address || ""
@@ -79,7 +80,6 @@ export const useSubscriptionData = () => {
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des abonnements:", error);
-      // Ne pas rediriger en cas d'erreur, juste afficher un toast
       toast({
         title: "Erreur",
         description: "Impossible de charger la liste des abonnements",

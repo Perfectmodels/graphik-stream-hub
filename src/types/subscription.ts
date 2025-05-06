@@ -30,3 +30,14 @@ export interface AdminNote {
   admin_id: string;
   subscription_id: number;
 }
+
+export interface Service {
+  id: number;
+  name: string;
+  description?: string;
+  base_price: number;
+  category_id?: number;
+  active?: boolean;
+  featured?: boolean;
+  image_url?: string;
+}
