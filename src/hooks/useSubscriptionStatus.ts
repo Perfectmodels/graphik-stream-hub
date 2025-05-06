@@ -17,13 +17,11 @@ export const useSubscriptionStatus = (
       
       console.log(`Updating subscription ${id} to status: ${status}`);
       
-      // Update subscription status with the correct field name (updated_at)
+      // Update subscription status without specifying any timestamp fields
+      // Let the database trigger handle the updated_at field
       const { error } = await supabase
         .from('subscription_requests')
-        .update({ 
-          status
-          // Let the database trigger handle updated_at field
-        })
+        .update({ status })
         .eq('id', id);
         
       if (error) {
