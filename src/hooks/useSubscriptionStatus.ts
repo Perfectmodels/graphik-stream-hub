@@ -18,8 +18,8 @@ export const useSubscriptionStatus = (
       const { error } = await supabase
         .from('subscription_requests')
         .update({ 
-          status, 
-          updated_at: new Date().toISOString() // Using updated_at instead of modified_at
+          status,
+          updated_at: new Date().toISOString() 
         })
         .eq('id', id);
         
