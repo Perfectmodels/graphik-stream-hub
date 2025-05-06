@@ -15,17 +15,18 @@ export const useSubscriptionStatus = (
     try {
       setProcessingIds(prev => [...prev, id]);
       
+      // Update subscription status with the correct field name (updated_at)
       const { error } = await supabase
         .from('subscription_requests')
         .update({ 
           status,
-          updated_at: new Date().toISOString() 
+          updated_at: new Date().toISOString()
         })
         .eq('id', id);
         
       if (error) throw error;
       
-      // Si le statut est approuvé, créer automatiquement un enregistrement de paiement en attente
+      // Create a payment record if status is approved
       if (status === 'approved') {
         const subscription = subscriptions.find(sub => sub.id === id);
         
@@ -54,7 +55,7 @@ export const useSubscriptionStatus = (
         variant: status === 'rejected' || status === 'suspended' ? "destructive" : "default",
       });
       
-      // Mettre à jour l'état local
+      // Update local state
       const updatedSubscriptions = subscriptions.map(sub => 
         sub.id === id ? { ...sub, status } : sub
       );
