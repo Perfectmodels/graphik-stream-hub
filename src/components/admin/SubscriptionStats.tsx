@@ -46,6 +46,9 @@ const SubscriptionStats: React.FC = () => {
         pending={stats.pending}
         approved={stats.approved}
         rejected={stats.rejected}
+        active={stats.active}
+        suspended={stats.suspended}
+        expired={stats.expired}
       />
       
       {/* Charts */}

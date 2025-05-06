@@ -10,6 +10,7 @@ export type StatData = {
   rejected: number;
   active: number;
   suspended: number;
+  expired: number;
   byService: Record<string, number>;
   byDuration: Record<string, number>;
   monthlyRevenue: Record<string, number>;
@@ -24,6 +25,7 @@ export const useSubscriptionStats = () => {
     rejected: 0,
     active: 0,
     suspended: 0,
+    expired: 0,
     byService: {},
     byDuration: {},
     monthlyRevenue: {},
@@ -50,19 +52,35 @@ export const useSubscriptionStats = () => {
         rejected: 0,
         active: 0,
         suspended: 0,
+        expired: 0,
         byService: {},
         byDuration: {},
         monthlyRevenue: {},
       };
       
+      // Current date for determining expired subscriptions
+      const today = new Date();
+      
       // Process each subscription
       subscriptions?.forEach(sub => {
+        // Check if subscription is expired (end_date is in the past)
+        const endDate = new Date(sub.end_date);
+        const isExpired = endDate < today && (sub.status === 'active' || sub.status === 'approved');
+        
         // Status counts
-        if (sub.status === 'pending') statsCopy.pending++;
-        else if (sub.status === 'approved') statsCopy.approved++;
-        else if (sub.status === 'rejected') statsCopy.rejected++;
-        else if (sub.status === 'active') statsCopy.active++;
-        else if (sub.status === 'suspended') statsCopy.suspended++;
+        if (isExpired) {
+          statsCopy.expired++;
+        } else if (sub.status === 'pending') {
+          statsCopy.pending++;
+        } else if (sub.status === 'approved') {
+          statsCopy.approved++;
+        } else if (sub.status === 'rejected') {
+          statsCopy.rejected++;
+        } else if (sub.status === 'active') {
+          statsCopy.active++;
+        } else if (sub.status === 'suspended') {
+          statsCopy.suspended++;
+        }
         
         // Service type counts
         if (statsCopy.byService[sub.service_type]) {
