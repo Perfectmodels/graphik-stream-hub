@@ -19,7 +19,7 @@ const StreamingAudio = () => {
   const platforms = [
     {
       name: "Spotify",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Spotify_logo_with_text.svg/1280px-Spotify_logo_with_text.svg.png",
+      logo: "https://montrealethics.ai/wp-content/uploads/2022/05/alexander-shatov-JlO3-oY5ZlQ-unsplash-768x576.jpg",
       description: "Plus de 70 millions de titres, recommandations personnalisées, interface intuitive",
       price: "À partir de 3000 FCFA/mois",
       features: [
@@ -32,7 +32,7 @@ const StreamingAudio = () => {
     },
     {
       name: "Apple Music",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5f/Apple_Music_icon.svg/1280px-Apple_Music_icon.svg.png",
+      logo: "https://miro.medium.com/v2/resize:fit:400/1*FK_BGgjj_mF7JATuCKDQrw.png",
       description: "Qualité sonore élevée, intégration avec l'écosystème Apple",
       price: "À partir de 3000 FCFA/mois",
       features: [
@@ -45,7 +45,7 @@ const StreamingAudio = () => {
     },
     {
       name: "Deezer",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Deezer_logo.svg/1280px-Deezer_logo.svg.png",
+      logo: "https://www.macplus.net/app/uploads/2022/04/deezer.jpg",
       description: "Plateforme française, large catalogue, Flow personnalisé",
       price: "À partir de 2500 FCFA/mois",
       features: [
@@ -58,7 +58,7 @@ const StreamingAudio = () => {
     },
     {
       name: "Amazon Music",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Amazon_Music_logo.svg/1280px-Amazon_Music_logo.svg.png",
+      logo: "https://m.media-amazon.com/images/I/61IBtPaYPRL.png",
       description: "Inclus avec Prime ou en version illimitée, qualité HD disponible",
       price: "À partir de 2500 FCFA/mois",
       features: [
@@ -79,7 +79,7 @@ const StreamingAudio = () => {
           title="Streaming Audio"
           subtitle="Musique Illimitée"
           description="Accédez à des millions de titres en streaming avec nos abonnements aux meilleures plateformes musicales"
-          backgroundImage="https://images.unsplash.com/photo-1493397212122-2b85dda8106b?auto=format&fit=crop&q=80&w=1600"
+          backgroundImage="https://www.laboutiquederic.com/img/cms/Guide/Guide%20Apple%20Music/guide-service-streaming-musical-appareils-audio-compatibles.jpg"
         />
 
         <section className="container mx-auto px-4 py-20">
