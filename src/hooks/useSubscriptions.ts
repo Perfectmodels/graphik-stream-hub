@@ -13,7 +13,13 @@ export const useSubscriptions = () => {
   
   const { processingIds, updateSubscriptionStatus } = useSubscriptionStatus(
     subscriptions,
-    (updatedSubscriptions) => setSubscriptions(updatedSubscriptions)
+    (updatedSubscriptions) => {
+      setSubscriptions(updatedSubscriptions);
+      // Refresh data from the server after updating
+      setTimeout(() => {
+        fetchSubscriptions();
+      }, 1000); // Small delay to ensure database update is complete
+    }
   );
   
   const { addNote } = useSubscriptionNotes(fetchSubscriptions);

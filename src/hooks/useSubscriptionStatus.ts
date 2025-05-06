@@ -15,22 +15,31 @@ export const useSubscriptionStatus = (
     try {
       setProcessingIds(prev => [...prev, id]);
       
+      console.log(`Updating subscription ${id} to status: ${status}`);
+      
       // Update subscription status with the correct field name (updated_at)
       const { error } = await supabase
         .from('subscription_requests')
         .update({ 
-          status,
-          updated_at: new Date().toISOString()
+          status
+          // Let the database trigger handle updated_at field
         })
         .eq('id', id);
         
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating subscription status:", error);
+        throw error;
+      }
+      
+      console.log(`Successfully updated subscription ${id} to status: ${status}`);
       
       // Create a payment record if status is approved
       if (status === 'approved') {
         const subscription = subscriptions.find(sub => sub.id === id);
         
         if (subscription) {
+          console.log(`Creating payment record for subscription ${id}`);
+          
           const { error: paymentError } = await supabase
             .from('payments')
             .insert({
@@ -41,8 +50,10 @@ export const useSubscriptionStatus = (
             });
             
           if (paymentError) {
-            console.error("Erreur lors de la création du paiement:", paymentError);
+            console.error("Error creating payment record:", paymentError);
             // Continue execution even if payment creation fails
+          } else {
+            console.log(`Payment record created successfully for subscription ${id}`);
           }
         }
       }

@@ -19,6 +19,13 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
   onAddNote,
   updateSubscriptionStatus
 }) => {
+  const isProcessing = processingIds.includes(subscription.id);
+  
+  const handleStatusUpdate = async (status: 'approved' | 'rejected' | 'active' | 'suspended') => {
+    console.log(`Requesting status update for subscription ${subscription.id} to ${status}`);
+    await updateSubscriptionStatus(subscription.id, status);
+  };
+
   const getAvailableActions = (sub: Subscription) => {
     switch (sub.status) {
       case 'pending':
@@ -28,19 +35,19 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
               variant="outline"
               size="sm"
               className="border-green-500 text-green-500 hover:bg-green-500/20"
-              onClick={() => updateSubscriptionStatus(sub.id, 'approved')}
-              disabled={processingIds.includes(sub.id)}
+              onClick={() => handleStatusUpdate('approved')}
+              disabled={isProcessing}
             >
-              <Check className="h-4 w-4" />
+              {isProcessing ? "..." : <Check className="h-4 w-4" />}
             </Button>
             <Button
               variant="outline"
               size="sm"
               className="border-red-500 text-red-500 hover:bg-red-500/20"
-              onClick={() => updateSubscriptionStatus(sub.id, 'rejected')}
-              disabled={processingIds.includes(sub.id)}
+              onClick={() => handleStatusUpdate('rejected')}
+              disabled={isProcessing}
             >
-              <X className="h-4 w-4" />
+              {isProcessing ? "..." : <X className="h-4 w-4" />}
             </Button>
           </>
         );
@@ -50,10 +57,10 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
             variant="outline"
             size="sm"
             className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
-            onClick={() => updateSubscriptionStatus(sub.id, 'active')}
-            disabled={processingIds.includes(sub.id)}
+            onClick={() => handleStatusUpdate('active')}
+            disabled={isProcessing}
           >
-            <Play className="h-4 w-4" />
+            {isProcessing ? "..." : <Play className="h-4 w-4" />}
           </Button>
         );
       case 'active':
@@ -62,10 +69,10 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
             variant="outline"
             size="sm"
             className="border-purple-500 text-purple-500 hover:bg-purple-500/20"
-            onClick={() => updateSubscriptionStatus(sub.id, 'suspended')}
-            disabled={processingIds.includes(sub.id)}
+            onClick={() => handleStatusUpdate('suspended')}
+            disabled={isProcessing}
           >
-            <Pause className="h-4 w-4" />
+            {isProcessing ? "..." : <Pause className="h-4 w-4" />}
           </Button>
         );
       case 'suspended':
@@ -74,10 +81,10 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
             variant="outline"
             size="sm"
             className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
-            onClick={() => updateSubscriptionStatus(sub.id, 'active')}
-            disabled={processingIds.includes(sub.id)}
+            onClick={() => handleStatusUpdate('active')}
+            disabled={isProcessing}
           >
-            <Play className="h-4 w-4" />
+            {isProcessing ? "..." : <Play className="h-4 w-4" />}
           </Button>
         );
       default:
