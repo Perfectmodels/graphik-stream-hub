@@ -12,6 +12,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Service } from "@/types/subscription";
 
 interface SubscriptionSearchProps {
   searchTerm: string;
@@ -20,7 +21,7 @@ interface SubscriptionSearchProps {
   setStatusFilter: (status: string) => void;
   serviceFilter: string;
   setServiceFilter: (service: string) => void;
-  services: { id: number; name: string }[];
+  services: Service[];
 }
 
 const SubscriptionSearch: React.FC<SubscriptionSearchProps> = ({ 
