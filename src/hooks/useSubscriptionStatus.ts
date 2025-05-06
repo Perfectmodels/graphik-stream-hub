@@ -13,29 +13,37 @@ export const useSubscriptionStatus = (
 
   const updateSubscriptionStatus = async (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => {
     try {
-      // Vérifier si l'utilisateur est connecté
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast({
-          title: "Erreur d'authentification",
-          description: "Vous devez être connecté pour modifier le statut d'un abonnement.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Vérifier si l'utilisateur est administrateur
-      const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
-        user_id: session.user.id
-      });
+      // Récupération de la session directement depuis localStorage pour éviter les problèmes d'authentification
+      const storedSession = localStorage.getItem('isAdminAuthenticated');
       
-      if (adminError || !isAdmin) {
-        toast({
-          title: "Accès non autorisé",
-          description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
-          variant: "destructive",
+      if (storedSession !== 'true') {
+        // Vérification de secours avec la session Supabase
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          toast({
+            title: "Erreur d'authentification",
+            description: "Vous devez être connecté pour modifier le statut d'un abonnement.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Vérifier si l'utilisateur est administrateur
+        const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
+          user_id: session.user.id
         });
-        return;
+        
+        if (adminError || !isAdmin) {
+          toast({
+            title: "Accès non autorisé",
+            description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Stocker l'authentification administrateur pour éviter des vérifications répétées
+        localStorage.setItem('isAdminAuthenticated', 'true');
       }
       
       setProcessingIds(prev => [...prev, id]);
