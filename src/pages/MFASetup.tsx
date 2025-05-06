@@ -62,9 +62,9 @@ const MFASetup = () => {
         if (data && isUserMFASettings(data)) {
           setEmailMFAEnabled(data.email_mfa_enabled || false);
           setSmsMFAEnabled(data.sms_mfa_enabled || false);
-          setUserPhoneNumber(data.phone_number || "");
           
           if (data.phone_number) {
+            setUserPhoneNumber(data.phone_number);
             form.setValue('phoneNumber', data.phone_number);
           }
         }

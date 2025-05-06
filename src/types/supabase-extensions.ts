@@ -1,3 +1,4 @@
+
 // Type guard for MFA verification codes
 export const isMFAVerificationCode = (obj: any): obj is { id: number } => {
   return obj && typeof obj.id === 'number';
