@@ -1,10 +1,12 @@
 
 import React from "react";
-import { BarChart as BarChartIcon } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useAnalyticsData } from "@/hooks/admin/useAnalyticsData";
+
+// Import our new components
+import AnalyticsHeader from "@/components/admin/analytics/AnalyticsHeader";
 import StatsCardSection from "@/components/admin/analytics/StatsCardSection";
+import AnalyticsTabs from "@/components/admin/analytics/AnalyticsTabs";
 import ActivityChart from "@/components/admin/analytics/ActivityChart";
 import SubscriptionChart from "@/components/admin/analytics/SubscriptionChart";
 import RevenueChart from "@/components/admin/analytics/RevenueChart";
@@ -26,10 +28,7 @@ const AdminAnalytics = () => {
 
   return (
     <AdminLayout>
-      <h2 className="text-2xl font-bold mb-6 flex items-center">
-        <BarChartIcon className="mr-2 h-6 w-6 text-graphik-purple" />
-        Statistiques et Analytique
-      </h2>
+      <AnalyticsHeader />
       
       <StatsCardSection
         totalUsers={totalUsers}
@@ -38,36 +37,28 @@ const AdminAnalytics = () => {
         todayActivities={todayActivities}
       />
       
-      <Tabs defaultValue="activities" className="mb-6">
-        <TabsList className="bg-graphik-light-grey/20">
-          <TabsTrigger value="activities">Activités</TabsTrigger>
-          <TabsTrigger value="subscriptions">Abonnements</TabsTrigger>
-          <TabsTrigger value="revenue">Revenus</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="activities" className="mt-4">
+      <AnalyticsTabs
+        activitiesContent={
           <ActivityChart
             activitiesLoading={activitiesLoading}
             activityData={activityData}
             period={period}
             setPeriod={setPeriod}
           />
-        </TabsContent>
-        
-        <TabsContent value="subscriptions" className="mt-4">
+        }
+        subscriptionsContent={
           <SubscriptionChart
             loading={statsLoading}
             data={subscriptionData}
           />
-        </TabsContent>
-        
-        <TabsContent value="revenue" className="mt-4">
+        }
+        revenueContent={
           <RevenueChart
             loading={statsLoading}
             data={revenueData}
           />
-        </TabsContent>
-      </Tabs>
+        }
+      />
     </AdminLayout>
   );
 };
