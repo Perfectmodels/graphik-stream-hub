@@ -21,11 +21,11 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   useEffect(() => {
     const checkAdmin = async () => {
       try {
-        // Vérifier si l'authentification admin est stockée dans localStorage
+        // Vérifier d'abord si l'authentification admin est déjà stockée dans localStorage
         const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
         
         if (isAuthenticated === 'true') {
-          // Si déjà authentifié dans localStorage, permettre l'accès
+          // Si déjà authentifié dans localStorage, permettre l'accès immédiatement
           setLoading(false);
           return;
         }
@@ -34,7 +34,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
         const { data: session } = await supabase.auth.getSession();
         
         if (!session.session) {
-          // Si aucune session active, rediriger
+          // Si aucune session active, rediriger vers la connexion
           navigate("/login");
           return;
         }
@@ -54,13 +54,13 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           return;
         }
 
-        // Stocker l'information d'authentification admin
+        // Stocker l'information d'authentification admin pour éviter des vérifications répétées
         localStorage.setItem('isAdminAuthenticated', 'true');
         setLoading(false);
-        
       } catch (error) {
         console.error("Erreur lors de la vérification admin:", error);
-        navigate("/login");
+        // En cas d'erreur, rester sur la page actuelle plutôt que de rediriger
+        setLoading(false);
       }
     };
     
