@@ -38,3 +38,5 @@ hibp_enabled = true
 [functions]
 [functions.send-subscription]
 verify_jwt = true
+[functions.send-sms]
+verify_jwt = true

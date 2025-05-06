@@ -15,6 +15,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Subscribe from "./pages/Subscribe";
 import Login from "./pages/Login";
+import MFASetup from "./pages/MFASetup";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/contact" element={<Contact />} />
           <Route path="/subscribe" element={<Subscribe />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/mfa-setup" element={<MFASetup />} />
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

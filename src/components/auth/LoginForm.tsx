@@ -4,9 +4,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { isUserMFASettings } from "@/types/supabase-extensions";
 
 interface LoginFormProps {
   onMfaRequired: (userId: string, email: string) => void;
@@ -70,7 +71,8 @@ const LoginForm: React.FC<LoginFormProps> = ({ onMfaRequired }) => {
           .eq('user_id', data.user.id)
           .single();
         
-        if (mfaSettings && isUserMFASettings(mfaSettings) && mfaSettings.email_mfa_enabled) {
+        if (mfaSettings && isUserMFASettings(mfaSettings) && 
+            (mfaSettings.email_mfa_enabled || mfaSettings.sms_mfa_enabled)) {
           // User has MFA enabled, request verification
           onMfaRequired(data.user.id, email);
           return;
@@ -188,13 +190,18 @@ const LoginForm: React.FC<LoginFormProps> = ({ onMfaRequired }) => {
       >
         {loading ? "Connexion en cours..." : "Se connecter"}
       </Button>
+      
+      <div className="pt-4 text-center">
+        <Link
+          to="/mfa-setup"
+          className="inline-flex items-center text-xs text-graphik-blue hover:text-graphik-lightblue transition-colors"
+        >
+          <Shield className="mr-1 h-3 w-3" />
+          Configurer l'authentification à deux facteurs
+        </Link>
+      </div>
     </form>
   );
-};
-
-// Type guard for MFA settings
-const isUserMFASettings = (obj: any): obj is { email_mfa_enabled: boolean } => {
-  return obj && typeof obj.email_mfa_enabled === 'boolean';
 };
 
 export default LoginForm;
