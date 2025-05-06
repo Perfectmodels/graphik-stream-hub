@@ -385,6 +385,56 @@ export type Database = {
           },
         ]
       }
+      subscription_approvals: {
+        Row: {
+          additional_requirements: string | null
+          admin_id: string | null
+          approval_date: string | null
+          created_at: string
+          id: string
+          rejection_date: string | null
+          rejection_reason: string | null
+          review_date: string | null
+          status: string
+          subscription_id: number
+          updated_at: string
+        }
+        Insert: {
+          additional_requirements?: string | null
+          admin_id?: string | null
+          approval_date?: string | null
+          created_at?: string
+          id?: string
+          rejection_date?: string | null
+          rejection_reason?: string | null
+          review_date?: string | null
+          status?: string
+          subscription_id: number
+          updated_at?: string
+        }
+        Update: {
+          additional_requirements?: string | null
+          admin_id?: string | null
+          approval_date?: string | null
+          created_at?: string
+          id?: string
+          rejection_date?: string | null
+          rejection_reason?: string | null
+          review_date?: string | null
+          status?: string
+          subscription_id?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_approvals_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       subscription_requests: {
         Row: {
           additional_info: string | null

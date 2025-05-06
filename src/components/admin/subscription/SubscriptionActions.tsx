@@ -1,10 +1,11 @@
 
 import React, { useState } from "react";
-import { MoreVertical, Eye, FileText, CheckCircle, XCircle, Play, Pause, Edit } from "lucide-react";
+import { MoreVertical, Eye, FileText, CheckCircle, XCircle, Play, Pause, Edit, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Subscription } from "@/types/subscription";
 import ManualSubscriptionForm from "./ManualSubscriptionForm";
+import ApprovalActionsDialog from "./ApprovalActionsDialog";
 
 interface SubscriptionActionsProps {
   subscription: Subscription;
@@ -22,6 +23,7 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
   updateSubscriptionStatus 
 }) => {
   const [manualValidationOpen, setManualValidationOpen] = useState(false);
+  const [approvalDialogOpen, setApprovalDialogOpen] = useState(false);
   const isProcessing = processingIds.includes(subscription.id);
   
   const handleStatusUpdate = async (status: 'approved' | 'rejected' | 'active' | 'suspended') => {
@@ -52,6 +54,14 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
           >
             <FileText className="mr-2 h-4 w-4" />
             <span>Ajouter une note</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem 
+            className="cursor-pointer hover:bg-graphik-light-grey/20"
+            onClick={() => setApprovalDialogOpen(true)}
+          >
+            <ClipboardCheck className="mr-2 h-4 w-4 text-purple-400" />
+            <span>Gérer l'approbation</span>
           </DropdownMenuItem>
           
           {subscription.status === 'pending' && (
@@ -125,6 +135,16 @@ const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
         onSuccess={() => {
           // Recharger les données après validation manuelle
           // Ceci sera géré par le parent (SubscriptionTable/useSubscriptions)
+        }}
+      />
+
+      <ApprovalActionsDialog
+        open={approvalDialogOpen}
+        onOpenChange={setApprovalDialogOpen}
+        subscription={subscription}
+        onSuccess={() => {
+          // Recharger les données après mise à jour de l'approbation
+          // Ceci sera géré par le parent au besoin
         }}
       />
     </>
