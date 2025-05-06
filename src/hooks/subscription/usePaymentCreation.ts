@@ -1,8 +1,11 @@
 
 import { supabase } from "@/integrations/supabase/client";
 import { Subscription } from "@/types/subscription";
+import { useToast } from "@/hooks/use-toast";
 
 export const usePaymentCreation = () => {
+  const { toast } = useToast();
+
   const createPaymentRecord = async (subscription: Subscription): Promise<boolean> => {
     try {
       console.log(`Creating payment record for subscription ${subscription.id}`);
@@ -13,16 +16,22 @@ export const usePaymentCreation = () => {
           subscription_id: subscription.id,
           amount: subscription.total_price,
           payment_method: subscription.payment_method || 'Mobile Money',
-          payment_status: 'pending'
+          payment_status: 'pending',
+          created_at: new Date().toISOString()
         });
         
       if (paymentError) {
         console.error("Error creating payment record:", paymentError);
+        toast({
+          title: "Erreur",
+          description: "Impossible de créer l'enregistrement de paiement",
+          variant: "destructive",
+        });
         return false;
-      } else {
-        console.log(`Payment record created successfully for subscription ${subscription.id}`);
-        return true;
       }
+      
+      console.log(`Payment record created successfully for subscription ${subscription.id}`);
+      return true;
     } catch (error) {
       console.error("Error in payment creation:", error);
       return false;

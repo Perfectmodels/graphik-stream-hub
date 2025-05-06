@@ -17,8 +17,6 @@ export const useStatusUpdate = () => {
     try {
       console.log(`Updating subscription ${id} to status: ${status}`);
       
-      // Here's the important change: explicitly specifying only the fields we want to update
-      // and using 'updated_at' instead of 'modified_at'
       const { error } = await supabase
         .from('subscription_requests')
         .update({ 
@@ -49,12 +47,22 @@ export const useStatusUpdate = () => {
       // Verify admin status first
       const isAdmin = await verifyAdminStatus();
       if (!isAdmin) {
+        toast({
+          title: "Accès non autorisé",
+          description: "Vous n'avez pas les droits d'administrateur",
+          variant: "destructive",
+        });
         return false;
       }
       
       // Update subscription status in database
       const updated = await updateSubscriptionStatusInDb(id, status);
       if (!updated) {
+        toast({
+          title: "Erreur",
+          description: "Impossible de mettre à jour le statut de l'abonnement",
+          variant: "destructive",
+        });
         return false;
       }
       

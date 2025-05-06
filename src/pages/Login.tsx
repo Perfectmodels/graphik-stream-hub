@@ -15,12 +15,7 @@ const Login = () => {
     setUserId(userId);
     setUserEmail(email);
     setRequiresMFA(true);
-    sendMFACode(userId, email);
-  };
-
-  const sendMFACode = async (userId: string, userEmail: string) => {
-    // This function is now handled inside the MFAVerificationForm component
-    // We just need to call the component and pass the userId and userEmail
+    // The sendMFACode is now handled inside the MFAVerificationForm component
   };
 
   // Render MFA verification screen if required
