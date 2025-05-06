@@ -13,45 +13,43 @@ export const useSubscriptionStatus = (
 
   const updateSubscriptionStatus = async (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => {
     try {
-      // Récupération de la session directement depuis localStorage pour éviter les problèmes d'authentification
-      const storedSession = localStorage.getItem('isAdminAuthenticated');
+      setProcessingIds(prev => [...prev, id]);
+      console.log(`Attempting to update subscription ${id} to status: ${status}`);
       
-      if (storedSession !== 'true') {
-        // Vérification de secours avec la session Supabase
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          toast({
-            title: "Erreur d'authentification",
-            description: "Vous devez être connecté pour modifier le statut d'un abonnement.",
-            variant: "destructive",
-          });
-          return;
-        }
-        
-        // Vérifier si l'utilisateur est administrateur
-        const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
-          user_id: session.user.id
+      // Force refresh the session from Supabase
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      
+      if (sessionError || !sessionData.session) {
+        toast({
+          title: "Erreur d'authentification",
+          description: "Vous devez être connecté pour modifier le statut d'un abonnement.",
+          variant: "destructive",
         });
-        
-        if (adminError || !isAdmin) {
-          toast({
-            title: "Accès non autorisé",
-            description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
-            variant: "destructive",
-          });
-          return;
-        }
-        
-        // Stocker l'authentification administrateur pour éviter des vérifications répétées
-        localStorage.setItem('isAdminAuthenticated', 'true');
+        return;
       }
       
-      setProcessingIds(prev => [...prev, id]);
+      // Vérification directe de l'accès administrateur
+      const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
+        user_id: sessionData.session.user.id
+      });
+      
+      console.log("Admin check result:", { isAdmin, adminError });
+      
+      if (adminError || !isAdmin) {
+        toast({
+          title: "Accès non autorisé",
+          description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Enregistrer dans localStorage pour éviter des vérifications répétées
+      localStorage.setItem('isAdminAuthenticated', 'true');
       
       console.log(`Updating subscription ${id} to status: ${status}`);
       
-      // Update subscription status - secure approach
-      // Let the database trigger handle the updated_at field
+      // Update subscription status
       const { error } = await supabase
         .from('subscription_requests')
         .update({ status })
