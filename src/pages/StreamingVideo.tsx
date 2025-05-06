@@ -23,7 +23,7 @@ const StreamingVideo = () => {
           title="Streaming Vidéo"
           subtitle="Offres et abonnements"
           description="Accédez aux meilleures plateformes de streaming vidéo avec nos abonnements optimisés"
-          backgroundImage="https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?auto=format&fit=crop&q=80&w=1600"
+          backgroundImage="https://resize.prod.femina.ladmedia.fr/rblr/652,438/img/var/2020-06/plateformes-streaming.jpg"
         />
 
         <PlatformTabs onSubscribe={handleSubscribe} />
