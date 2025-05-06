@@ -11,14 +11,9 @@ import StreamingVideo from "./pages/StreamingVideo";
 import StreamingAudio from "./pages/StreamingAudio";
 import IPTV from "./pages/IPTV";
 import Gaming from "./pages/Gaming";
-import About from "./pages/About";
-import Blog from "./pages/Blog";
 import Contact from "./pages/Contact";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Subscribe from "./pages/Subscribe";
-import MFASetup from "./pages/MFASetup";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -40,13 +35,8 @@ const App = () => (
           <Route path="/streaming-audio" element={<StreamingAudio />} />
           <Route path="/iptv" element={<IPTV />} />
           <Route path="/gaming" element={<Gaming />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/blog" element={<Blog />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
           <Route path="/subscribe" element={<Subscribe />} />
-          <Route path="/mfa-setup" element={<MFASetup />} />
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
