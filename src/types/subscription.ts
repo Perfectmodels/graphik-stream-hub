@@ -1,26 +1,32 @@
 
-export type Service = {
-  id: number;
-  name: string;
-  description: string | null;
-  base_price: number;
-  category_id: number | null;
-};
+// src/types/subscription.ts
+export type SubscriptionStatus = 'pending' | 'approved' | 'rejected' | 'active' | 'expired' | 'suspended';
+export type PaymentMethod = 'Mobile Money' | 'Bank Transfer' | 'Credit Card' | 'PayPal' | string;
+export type PaymentStatus = 'pending' | 'completed' | 'failed' | 'refunded' | null;
 
-export type Subscription = {
+export interface Subscription {
   id: number;
   full_name: string;
   email: string;
   phone: string;
+  address?: string;
   service_type: string;
-  status: 'pending' | 'approved' | 'rejected' | 'active' | 'expired' | 'suspended';
+  status: SubscriptionStatus;
   total_price: number;
   created_at: string;
   start_date: string;
   end_date: string;
   duration_months: number;
-  payment_method?: string;
-  has_payment?: boolean;
-  payment_status?: string | null;
-  has_notes?: boolean;
-};
+  has_payment: boolean;
+  payment_status: PaymentStatus;
+  has_notes: boolean;
+  payment_method: PaymentMethod;
+}
+
+export interface AdminNote {
+  id: number;
+  note: string;
+  created_at: string;
+  admin_id: string;
+  subscription_id: number;
+}

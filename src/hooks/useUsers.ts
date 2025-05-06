@@ -17,25 +17,34 @@ export const useUsers = () => {
 
   const fetchUsers = async () => {
     try {
-      const { data: session } = await supabase.auth.getSession();
+      // Vérifier si l'utilisateur est authentifié comme admin via localStorage
+      const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
       
-      if (!session.session) {
-        navigate("/login");
-        return;
-      }
-      
-      const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
-        user_id: session.session.user.id
-      });
-      
-      if (adminError || adminData !== true) {
-        toast({
-          title: "Accès non autorisé",
-          description: "Vous n'avez pas les droits d'administrateur",
-          variant: "destructive",
+      if (isAuthenticated !== 'true') {
+        // Vérifier la session Supabase seulement si pas déjà authentifié
+        const { data: session } = await supabase.auth.getSession();
+        
+        if (!session.session) {
+          navigate("/login");
+          return;
+        }
+        
+        const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
+          user_id: session.session.user.id
         });
-        navigate("/");
-        return;
+        
+        if (adminError || adminData !== true) {
+          toast({
+            title: "Accès non autorisé",
+            description: "Vous n'avez pas les droits d'administrateur",
+            variant: "destructive",
+          });
+          navigate("/");
+          return;
+        }
+        
+        // Stocker l'authentification
+        localStorage.setItem('isAdminAuthenticated', 'true');
       }
       
       // Récupérer les profils utilisateurs depuis les demandes d'abonnement
@@ -68,6 +77,7 @@ export const useUsers = () => {
       }
     } catch (error) {
       console.error("Erreur lors de la récupération des utilisateurs:", error);
+      // Ne pas rediriger en cas d'erreur, juste afficher un toast
       toast({
         title: "Erreur",
         description: "Impossible de charger la liste des utilisateurs",
