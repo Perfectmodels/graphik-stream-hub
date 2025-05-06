@@ -28,6 +28,13 @@ api_url = "http://localhost"
 enabled = true
 port = 54324
 
+[auth]
+enable_signup = true
+disable_signup = false
+enable_fast_signup = false
+enable_dbl_confirm = false
+hibp_enabled = true
+
 [functions]
 [functions.send-subscription]
 verify_jwt = true
