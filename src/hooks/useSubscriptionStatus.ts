@@ -17,7 +17,10 @@ export const useSubscriptionStatus = (
       
       const { error } = await supabase
         .from('subscription_requests')
-        .update({ status, updated_at: new Date().toISOString() })
+        .update({ 
+          status, 
+          updated_at: new Date().toISOString() // Using updated_at instead of modified_at
+        })
         .eq('id', id);
         
       if (error) throw error;
@@ -36,7 +39,10 @@ export const useSubscriptionStatus = (
               payment_status: 'pending'
             });
             
-          if (paymentError) console.error("Erreur lors de la création du paiement:", paymentError);
+          if (paymentError) {
+            console.error("Erreur lors de la création du paiement:", paymentError);
+            // Continue execution even if payment creation fails
+          }
         }
       }
       
