@@ -2,17 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import {
-  LayoutDashboard,
-  Users,
-  CreditCard,
-  Settings,
-  LogOut,
-  Menu,
-  X
-} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AdminSidebar from "./AdminSidebar";
+import AdminMobileHeader from "./AdminMobileHeader";
+import AdminContent from "./AdminContent";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -56,14 +49,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     navigate("/login");
   };
 
-  const isActive = (path: string) => location.pathname === path;
-
-  const navigationItems = [
-    { path: "/admin/dashboard", label: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" /> },
-    { path: "/admin/users", label: "Utilisateurs", icon: <Users className="h-5 w-5" /> },
-    { path: "/admin/subscriptions", label: "Abonnements", icon: <CreditCard className="h-5 w-5" /> },
-    { path: "/admin/settings", label: "Paramètres", icon: <Settings className="h-5 w-5" /> }
-  ];
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
 
   if (loading) {
     return (
@@ -84,84 +72,32 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
             </span>
           </Link>
         </div>
-        <nav className="flex flex-col flex-1 p-4">
-          {navigationItems.map((item) => (
-            <Link
-              key={item.path}
-              to={item.path}
-              className={`flex items-center px-4 py-3 mb-2 rounded-md transition-colors ${
-                isActive(item.path)
-                  ? "bg-graphik-blue/20 text-graphik-blue"
-                  : "text-gray-300 hover:bg-graphik-light-grey/10 hover:text-white"
-              }`}
-            >
-              {item.icon}
-              <span className="ml-3">{item.label}</span>
-            </Link>
-          ))}
-        </nav>
-        <div className="p-4 border-t border-graphik-light-grey">
-          <Button
-            variant="ghost"
-            onClick={handleLogout}
-            className="w-full justify-start text-gray-300 hover:bg-graphik-light-grey/10 hover:text-white"
-          >
-            <LogOut className="mr-2 h-5 w-5" /> Déconnexion
-          </Button>
-        </div>
+        <AdminSidebar handleLogout={handleLogout} />
       </aside>
 
       {/* Content area */}
       <div className="flex-1 flex flex-col">
         {/* Mobile header */}
-        <header className="md:hidden bg-graphik-grey border-b border-graphik-light-grey">
-          <div className="px-4 py-3 flex justify-between items-center">
-            <Link to="/admin/dashboard" className="inline-block">
-              <span className="text-xl font-bold bg-gradient-to-r from-graphik-blue via-graphik-purple to-graphik-lightblue bg-clip-text text-transparent">
-                Graphik'Admin
-              </span>
-            </Link>
-            <button
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="text-white focus:outline-none"
-            >
-              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>
+        <AdminMobileHeader 
+          isMobileMenuOpen={isMobileMenuOpen} 
+          toggleMobileMenu={toggleMobileMenu} 
+        />
+        
+        {/* Mobile menu */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden p-4 border-t border-graphik-light-grey bg-graphik-grey animate-fade-in">
+            <AdminSidebar 
+              handleLogout={handleLogout} 
+              isMobileMenuOpen={isMobileMenuOpen}
+              onMobileMenuClose={() => setIsMobileMenuOpen(false)}
+            />
           </div>
-          
-          {/* Mobile menu */}
-          {isMobileMenuOpen && (
-            <nav className="p-4 border-t border-graphik-light-grey bg-graphik-grey animate-fade-in">
-              {navigationItems.map((item) => (
-                <Link
-                  key={item.path}
-                  to={item.path}
-                  className={`flex items-center px-4 py-3 mb-2 rounded-md transition-colors ${
-                    isActive(item.path)
-                      ? "bg-graphik-blue/20 text-graphik-blue"
-                      : "text-gray-300 hover:bg-graphik-light-grey/10 hover:text-white"
-                  }`}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {item.icon}
-                  <span className="ml-3">{item.label}</span>
-                </Link>
-              ))}
-              <Button
-                variant="ghost"
-                onClick={handleLogout}
-                className="w-full justify-start text-gray-300 hover:bg-graphik-light-grey/10 hover:text-white mt-4"
-              >
-                <LogOut className="mr-2 h-5 w-5" /> Déconnexion
-              </Button>
-            </nav>
-          )}
-        </header>
+        )}
 
         {/* Main content */}
-        <main className="flex-1 p-6 overflow-auto">
+        <AdminContent>
           {children}
-        </main>
+        </AdminContent>
       </div>
     </div>
   );
