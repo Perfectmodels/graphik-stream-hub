@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { isMFAVerificationCode } from "@/types/supabase-extensions";
+import { isMFAVerificationCode, isUserMFASettings } from "@/types/supabase-extensions";
 
 interface UseMFAVerificationProps {
   userId: string;
@@ -33,7 +33,7 @@ export const useMFAVerification = ({ userId, userEmail, onBack }: UseMFAVerifica
           .eq('user_id', userId)
           .single();
         
-        if (data && data.sms_mfa_enabled && data.phone_number) {
+        if (data && isUserMFASettings(data) && data.sms_mfa_enabled && data.phone_number) {
           setUserPhoneNumber(data.phone_number);
         }
       } catch (error) {

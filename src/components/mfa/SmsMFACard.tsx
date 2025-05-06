@@ -22,7 +22,7 @@ interface SmsMFACardProps {
   disableMFA: (type: 'email' | 'sms') => void;
   loading: boolean;
   form: UseFormReturn<{
-    phoneNumber: string;
+    phoneNumber?: string;
   }, any>;
 }
 
