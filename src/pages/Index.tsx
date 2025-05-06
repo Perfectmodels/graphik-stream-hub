@@ -24,7 +24,7 @@ const Index = () => {
           description="Découvrez un accès simplifié aux meilleures plateformes de divertissement en un seul endroit. Vidéo, audio, IPTV et gaming à portée de clic."
           primaryButtonText="Découvrir les offres"
           secondaryButtonText="En savoir plus"
-          secondaryButtonLink="/about"
+          secondaryButtonLink="/contact"
         />
 
         {/* Services Section */}
@@ -281,7 +281,7 @@ const Index = () => {
           </div>
 
           <div className="text-center mt-12">
-            <Link to="/about">
+            <Link to="/contact">
               <Button variant="outline" className="border-graphik-blue text-white hover:bg-graphik-blue/20">
                 En savoir plus sur nous
               </Button>
@@ -299,9 +299,9 @@ const Index = () => {
               Rejoignez des milliers d'utilisateurs satisfaits et accédez au meilleur du divertissement en un clic.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link to="/register">
+              <Link to="/subscribe">
                 <Button size="lg" className="bg-white text-graphik-purple hover:bg-white/90">
-                  S'inscrire maintenant
+                  S'abonner maintenant
                 </Button>
               </Link>
               <Link to="/streaming-video">

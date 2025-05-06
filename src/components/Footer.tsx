@@ -64,23 +64,18 @@ const Footer = () => {
             <h4 className="text-white font-semibold mb-4">Support</h4>
             <ul className="space-y-2">
               <li>
-                <Link to="/about" className="text-gray-300 hover:text-white transition-colors">
-                  À propos
-                </Link>
-              </li>
-              <li>
                 <Link to="/contact" className="text-gray-300 hover:text-white transition-colors">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-300 hover:text-white transition-colors">
-                  FAQ
+                <Link to="/admin" className="text-gray-300 hover:text-white transition-colors">
+                  Administration
                 </Link>
               </li>
               <li>
-                <Link to="/blog" className="text-gray-300 hover:text-white transition-colors">
-                  Blog
+                <Link to="/subscribe" className="text-gray-300 hover:text-white transition-colors">
+                  S'abonner
                 </Link>
               </li>
             </ul>
