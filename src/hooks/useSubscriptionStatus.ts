@@ -14,38 +14,73 @@ export const useSubscriptionStatus = (
   const updateSubscriptionStatus = async (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => {
     try {
       setProcessingIds(prev => [...prev, id]);
-      console.log(`Attempting to update subscription ${id} to status: ${status}`);
+      console.log(`Requesting status update for subscription ${id} to status: ${status}`);
       
-      // Force refresh the session from Supabase
-      const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+      // Check if admin status is cached in localStorage first
+      const isAdminAuthenticated = localStorage.getItem('isAdminAuthenticated');
       
-      if (sessionError || !sessionData.session) {
-        toast({
-          title: "Erreur d'authentification",
-          description: "Vous devez être connecté pour modifier le statut d'un abonnement.",
-          variant: "destructive",
+      // If not cached, verify with Supabase
+      if (isAdminAuthenticated !== 'true') {
+        console.log("No cached admin status found, checking with Supabase");
+        
+        // Get current session
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError) {
+          console.error("Session error:", sessionError);
+          toast({
+            title: "Erreur d'authentification",
+            description: "Une erreur s'est produite lors de la vérification de votre session.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        if (!sessionData.session) {
+          console.log("No active session found");
+          toast({
+            title: "Erreur d'authentification",
+            description: "Vous devez être connecté pour vérifier le statut d'abonnement.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        console.log("Active session found, checking admin status");
+        
+        // Verify admin status
+        const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
+          user_id: sessionData.session.user.id
         });
-        return;
+        
+        console.log("Admin check result:", { isAdmin, adminError });
+        
+        if (adminError) {
+          console.error("Admin check error:", adminError);
+          toast({
+            title: "Erreur de vérification",
+            description: "Impossible de vérifier vos droits d'administration.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        if (!isAdmin) {
+          console.log("User is not an admin");
+          toast({
+            title: "Accès non autorisé",
+            description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
+            variant: "destructive",
+          });
+          return;
+        }
+        
+        // Cache admin status
+        console.log("Admin status confirmed, caching");
+        localStorage.setItem('isAdminAuthenticated', 'true');
+      } else {
+        console.log("Using cached admin authentication");
       }
-      
-      // Vérification directe de l'accès administrateur
-      const { data: isAdmin, error: adminError } = await supabase.rpc('is_admin', {
-        user_id: sessionData.session.user.id
-      });
-      
-      console.log("Admin check result:", { isAdmin, adminError });
-      
-      if (adminError || !isAdmin) {
-        toast({
-          title: "Accès non autorisé",
-          description: "Vous n'avez pas les droits nécessaires pour effectuer cette action.",
-          variant: "destructive",
-        });
-        return;
-      }
-      
-      // Enregistrer dans localStorage pour éviter des vérifications répétées
-      localStorage.setItem('isAdminAuthenticated', 'true');
       
       console.log(`Updating subscription ${id} to status: ${status}`);
       
