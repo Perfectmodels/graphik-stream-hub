@@ -110,8 +110,21 @@ const ManualSubscriptionForm: React.FC<ManualSubscriptionFormProps> = ({
     setIsSubmitting(true);
     
     try {
+      console.log("Starting manual validation process...");
+      
       // Calculer la date de fin
       const endDate = calculateEndDate(data.startDate, data.durationMonths);
+      
+      // Debugging information
+      console.log("Subscription data to update:", {
+        service_type: data.serviceType,
+        total_price: parseFloat(data.totalPrice),
+        duration_months: parseInt(data.durationMonths),
+        start_date: format(data.startDate, 'yyyy-MM-dd'),
+        end_date: format(endDate, 'yyyy-MM-dd'),
+        status: 'approved',
+        updated_at: new Date().toISOString()
+      });
       
       // Mettre à jour l'abonnement
       const { error } = await supabase
@@ -123,11 +136,16 @@ const ManualSubscriptionForm: React.FC<ManualSubscriptionFormProps> = ({
           start_date: format(data.startDate, 'yyyy-MM-dd'),
           end_date: format(endDate, 'yyyy-MM-dd'),
           status: 'approved',
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString() // Corrected from modified_at to updated_at
         })
         .eq('id', subscription.id);
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error updating subscription:", error);
+        throw error;
+      }
+      
+      console.log("Subscription updated successfully, now creating payment record");
       
       // Créer un enregistrement de paiement
       const { error: paymentError } = await supabase
@@ -141,6 +159,8 @@ const ManualSubscriptionForm: React.FC<ManualSubscriptionFormProps> = ({
         
       if (paymentError) {
         console.error("Erreur lors de la création du paiement:", paymentError);
+      } else {
+        console.log("Payment record created successfully");
       }
       
       toast({
