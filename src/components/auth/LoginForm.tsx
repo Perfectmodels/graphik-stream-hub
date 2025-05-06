@@ -46,10 +46,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onMfaRequired }) => {
           duration: 3000,
         });
         
-        // Force immediate redirect after successful admin login
-        setTimeout(() => {
-          navigate('/admin/dashboard');
-        }, 100);
+        // Stocker l'information d'authentification admin dans localStorage
+        localStorage.setItem('isAdminAuthenticated', 'true');
+        
+        // Redirection immédiate vers le tableau de bord
+        navigate('/admin/dashboard');
         return;
       }
       
@@ -90,10 +91,11 @@ const LoginForm: React.FC<LoginFormProps> = ({ onMfaRequired }) => {
             duration: 3000,
           });
           
-          // Force immediate redirect after successful admin login
-          setTimeout(() => {
-            navigate('/admin/dashboard');
-          }, 100);
+          // Stocker l'information d'authentification admin dans localStorage
+          localStorage.setItem('isAdminAuthenticated', 'true');
+          
+          // Redirection immédiate vers le tableau de bord
+          navigate('/admin/dashboard');
           return;
         }
       }

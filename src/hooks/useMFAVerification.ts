@@ -150,7 +150,14 @@ export const useMFAVerification = ({ userId, userEmail, onBack }: UseMFAVerifica
           description: "Bienvenue dans l'interface d'administration !",
           duration: 3000,
         });
-        navigate('/admin/dashboard');
+        
+        // Stocker l'information d'authentification admin dans localStorage
+        localStorage.setItem('isAdminAuthenticated', 'true');
+        
+        // Redirection immédiate vers le tableau de bord
+        setTimeout(() => {
+          navigate('/admin/dashboard');
+        }, 100);
         return;
       }
       

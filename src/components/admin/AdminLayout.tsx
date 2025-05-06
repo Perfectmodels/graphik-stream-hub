@@ -19,28 +19,48 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Utiliser localStorage pour éviter des redirections à répétition
-    const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
-    
     const checkAdmin = async () => {
       try {
+        // Vérifier si l'authentification admin est stockée dans localStorage
+        const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
+        
+        if (isAuthenticated === 'true') {
+          // Si déjà authentifié dans localStorage, permettre l'accès
+          setLoading(false);
+          return;
+        }
+
+        // Sinon vérifier la session Supabase
         const { data: session } = await supabase.auth.getSession();
         
         if (!session.session) {
-          // Si aucune session active et pas déjà authentifié dans localStorage
-          if (!isAuthenticated) {
-            navigate("/login");
-            return;
-          }
-        } else {
-          // Si une session est active, marquer comme authentifié
-          localStorage.setItem('isAdminAuthenticated', 'true');
+          // Si aucune session active, rediriger
+          navigate("/login");
+          return;
         }
+        
+        // Vérifier si l'utilisateur est admin
+        const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
+          user_id: session.session.user.id
+        });
+        
+        if (adminError || adminData !== true) {
+          toast({
+            title: "Accès non autorisé",
+            description: "Vous n'avez pas les droits d'administrateur",
+            variant: "destructive",
+          });
+          navigate("/");
+          return;
+        }
+
+        // Stocker l'information d'authentification admin
+        localStorage.setItem('isAdminAuthenticated', 'true');
+        setLoading(false);
+        
       } catch (error) {
         console.error("Erreur lors de la vérification admin:", error);
-        // On gère l'erreur mais on ne redirige pas forcément
-      } finally {
-        setLoading(false);
+        navigate("/login");
       }
     };
     
