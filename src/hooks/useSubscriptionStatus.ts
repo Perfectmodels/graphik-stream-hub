@@ -84,7 +84,8 @@ export const useSubscriptionStatus = (
       
       console.log(`Updating subscription ${id} to status: ${status}`);
       
-      // Fix: Use explicit column setting for the update and explicitly set updated_at to now()
+      // Here's the important change: explicitly specifying only the fields we want to update
+      // and using 'updated_at' instead of 'modified_at'
       const { error } = await supabase
         .from('subscription_requests')
         .update({ 

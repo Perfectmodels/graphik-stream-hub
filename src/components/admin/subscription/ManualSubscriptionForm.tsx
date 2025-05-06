@@ -126,7 +126,7 @@ const ManualSubscriptionForm: React.FC<ManualSubscriptionFormProps> = ({
         updated_at: new Date().toISOString()
       });
       
-      // Mettre à jour l'abonnement
+      // Mettre à jour l'abonnement - Make sure we're only updating the fields we need and using updated_at
       const { error } = await supabase
         .from('subscription_requests')
         .update({
@@ -136,7 +136,7 @@ const ManualSubscriptionForm: React.FC<ManualSubscriptionFormProps> = ({
           start_date: format(data.startDate, 'yyyy-MM-dd'),
           end_date: format(endDate, 'yyyy-MM-dd'),
           status: 'approved',
-          updated_at: new Date().toISOString() // Corrected from modified_at to updated_at
+          updated_at: new Date().toISOString() // This is the correct field name
         })
         .eq('id', subscription.id);
       
