@@ -56,6 +56,11 @@ const AdminSubscriptions = () => {
     expired: subscriptions.filter(sub => sub.status === 'expired').length,
   };
 
+  // Fonction pour rafraichir les données
+  const refreshData = () => {
+    fetchSubscriptions();
+  };
+
   return (
     <AdminLayout>
       <h2 className="text-2xl font-bold mb-6 flex items-center">
@@ -101,6 +106,7 @@ const AdminSubscriptions = () => {
             updateSubscriptionStatus={updateSubscriptionStatus}
             addNote={addNote}
             searchTerm={searchTerm}
+            onRefresh={refreshData}
           />
         </Card>
       </div>

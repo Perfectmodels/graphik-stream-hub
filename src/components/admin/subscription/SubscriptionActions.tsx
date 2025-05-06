@@ -1,8 +1,10 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { MoreVertical, Eye, FileText, CheckCircle, XCircle, Play, Pause, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Check, X, MessageSquare, Play, Pause, Eye, Plus } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Subscription } from "@/types/subscription";
+import ManualSubscriptionForm from "./ManualSubscriptionForm";
 
 interface SubscriptionActionsProps {
   subscription: Subscription;
@@ -12,107 +14,120 @@ interface SubscriptionActionsProps {
   updateSubscriptionStatus: (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => Promise<void>;
 }
 
-const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
-  subscription,
-  processingIds,
+const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({ 
+  subscription, 
+  processingIds, 
   onViewDetails,
   onAddNote,
-  updateSubscriptionStatus
+  updateSubscriptionStatus 
 }) => {
+  const [manualValidationOpen, setManualValidationOpen] = useState(false);
   const isProcessing = processingIds.includes(subscription.id);
   
   const handleStatusUpdate = async (status: 'approved' | 'rejected' | 'active' | 'suspended') => {
-    console.log(`Requesting status update for subscription ${subscription.id} to ${status}`);
     await updateSubscriptionStatus(subscription.id, status);
   };
-
-  const getAvailableActions = (sub: Subscription) => {
-    switch (sub.status) {
-      case 'pending':
-        return (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-green-500 text-green-500 hover:bg-green-500/20"
-              onClick={() => handleStatusUpdate('approved')}
-              disabled={isProcessing}
-            >
-              {isProcessing ? "..." : <Check className="h-4 w-4" />}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-red-500 text-red-500 hover:bg-red-500/20"
-              onClick={() => handleStatusUpdate('rejected')}
-              disabled={isProcessing}
-            >
-              {isProcessing ? "..." : <X className="h-4 w-4" />}
-            </Button>
-          </>
-        );
-      case 'approved':
-        return (
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
-            onClick={() => handleStatusUpdate('active')}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "..." : <Play className="h-4 w-4" />}
-          </Button>
-        );
-      case 'active':
-        return (
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-purple-500 text-purple-500 hover:bg-purple-500/20"
-            onClick={() => handleStatusUpdate('suspended')}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "..." : <Pause className="h-4 w-4" />}
-          </Button>
-        );
-      case 'suspended':
-        return (
-          <Button
-            variant="outline"
-            size="sm"
-            className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
-            onClick={() => handleStatusUpdate('active')}
-            disabled={isProcessing}
-          >
-            {isProcessing ? "..." : <Play className="h-4 w-4" />}
-          </Button>
-        );
-      default:
-        return null;
-    }
-  };
-
+  
   return (
-    <div className="flex space-x-2">
-      <Button
-        variant="outline"
-        size="sm"
-        className="border-gray-500 text-gray-300 hover:bg-graphik-light-grey/20"
-        onClick={() => onViewDetails(subscription)}
-      >
-        <Eye className="h-4 w-4" />
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
-        className="border-amber-500 text-amber-500 hover:bg-amber-500/20"
-        onClick={() => onAddNote(subscription)}
-      >
-        <Plus className="h-4 w-4 mr-1" />
-        <MessageSquare className="h-4 w-4" />
-      </Button>
-      {getAvailableActions(subscription)}
-    </div>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0 text-white hover:bg-graphik-light-grey/20">
+            <span className="sr-only">Ouvrir le menu</span>
+            <MoreVertical className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="bg-graphik-dark border-graphik-light-grey text-white">
+          <DropdownMenuItem 
+            className="cursor-pointer hover:bg-graphik-light-grey/20"
+            onClick={() => onViewDetails(subscription)}
+          >
+            <Eye className="mr-2 h-4 w-4" />
+            <span>Voir détails</span>
+          </DropdownMenuItem>
+          
+          <DropdownMenuItem 
+            className="cursor-pointer hover:bg-graphik-light-grey/20"
+            onClick={() => onAddNote(subscription)}
+          >
+            <FileText className="mr-2 h-4 w-4" />
+            <span>Ajouter une note</span>
+          </DropdownMenuItem>
+          
+          {subscription.status === 'pending' && (
+            <>
+              <DropdownMenuItem 
+                className="cursor-pointer hover:bg-graphik-light-grey/20"
+                onClick={() => handleStatusUpdate('approved')}
+                disabled={isProcessing}
+              >
+                <CheckCircle className="mr-2 h-4 w-4 text-green-500" />
+                <span>Approuver</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="cursor-pointer hover:bg-graphik-light-grey/20"
+                onClick={() => handleStatusUpdate('rejected')}
+                disabled={isProcessing}
+              >
+                <XCircle className="mr-2 h-4 w-4 text-red-500" />
+                <span>Rejeter</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="cursor-pointer hover:bg-graphik-light-grey/20 flex items-center"
+                onClick={() => setManualValidationOpen(true)}
+                disabled={isProcessing}
+              >
+                <Edit className="mr-2 h-4 w-4 text-blue-500" />
+                <span>Validation manuelle</span>
+              </DropdownMenuItem>
+            </>
+          )}
+          
+          {subscription.status === 'approved' && (
+            <DropdownMenuItem 
+              className="cursor-pointer hover:bg-graphik-light-grey/20"
+              onClick={() => handleStatusUpdate('active')}
+              disabled={isProcessing}
+            >
+              <Play className="mr-2 h-4 w-4 text-green-500" />
+              <span>Activer</span>
+            </DropdownMenuItem>
+          )}
+          
+          {subscription.status === 'active' && (
+            <DropdownMenuItem 
+              className="cursor-pointer hover:bg-graphik-light-grey/20"
+              onClick={() => handleStatusUpdate('suspended')}
+              disabled={isProcessing}
+            >
+              <Pause className="mr-2 h-4 w-4 text-orange-500" />
+              <span>Suspendre</span>
+            </DropdownMenuItem>
+          )}
+          
+          {subscription.status === 'suspended' && (
+            <DropdownMenuItem 
+              className="cursor-pointer hover:bg-graphik-light-grey/20"
+              onClick={() => handleStatusUpdate('active')}
+              disabled={isProcessing}
+            >
+              <Play className="mr-2 h-4 w-4 text-green-500" />
+              <span>Réactiver</span>
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
+      <ManualSubscriptionForm 
+        open={manualValidationOpen}
+        onOpenChange={setManualValidationOpen}
+        subscription={subscription}
+        onSuccess={() => {
+          // Recharger les données après validation manuelle
+          // Ceci sera géré par le parent (SubscriptionTable/useSubscriptions)
+        }}
+      />
+    </>
   );
 };
 

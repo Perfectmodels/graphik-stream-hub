@@ -15,6 +15,7 @@ interface SubscriptionTableProps {
   updateSubscriptionStatus: (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => Promise<void>;
   addNote: (id: number, note: string) => Promise<void>;
   searchTerm: string;
+  onRefresh?: () => void;
 }
 
 const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
@@ -23,7 +24,8 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
   processingIds,
   updateSubscriptionStatus,
   addNote,
-  searchTerm
+  searchTerm,
+  onRefresh
 }) => {
   const [selectedSubscription, setSelectedSubscription] = useState<Subscription | null>(null);
   const [noteDialogOpen, setNoteDialogOpen] = useState(false);
@@ -37,6 +39,16 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
   const openDetailsDialog = (sub: Subscription) => {
     setSelectedSubscription(sub);
     setDetailsDialogOpen(true);
+  };
+
+  const handleAddNote = async (id: number, note: string) => {
+    await addNote(id, note);
+    if (onRefresh) onRefresh();
+  };
+
+  const handleStatusUpdate = async (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => {
+    await updateSubscriptionStatus(id, status);
+    if (onRefresh) onRefresh();
   };
 
   return (
@@ -77,7 +89,7 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
                     processingIds={processingIds}
                     onViewDetails={openDetailsDialog}
                     onAddNote={openNoteDialog}
-                    updateSubscriptionStatus={updateSubscriptionStatus}
+                    updateSubscriptionStatus={handleStatusUpdate}
                   />
                 </TableCell>
               </TableRow>
@@ -105,7 +117,7 @@ const SubscriptionTable: React.FC<SubscriptionTableProps> = ({
         open={noteDialogOpen}
         onOpenChange={setNoteDialogOpen}
         subscription={selectedSubscription}
-        onAddNote={addNote}
+        onAddNote={handleAddNote}
       />
     </div>
   );
