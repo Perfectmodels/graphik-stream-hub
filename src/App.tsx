@@ -14,6 +14,7 @@ import Gaming from "./pages/Gaming";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import Subscribe from "./pages/Subscribe";
+import Login from "./pages/Login";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/gaming" element={<Gaming />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/subscribe" element={<Subscribe />} />
+          <Route path="/login" element={<Login />} />
           
           {/* Routes Admin */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />

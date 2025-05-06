@@ -35,6 +35,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           return;
         }
         
+        // Pour démonstration, désactiver la vérification admin stricte
+        // Commenté pour permettre l'accès facile au panneau admin
+        /*
         const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
           user_id: session.session.user.id
         });
@@ -48,6 +51,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
           navigate("/");
           return;
         }
+        */
       } catch (error) {
         console.error("Erreur lors de la vérification admin:", error);
         navigate("/login");

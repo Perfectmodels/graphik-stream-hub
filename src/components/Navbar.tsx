@@ -43,7 +43,7 @@ const Navbar = () => {
 
         {/* Admin & Subscribe buttons */}
         <div className="hidden md:flex items-center space-x-2">
-          <Link to="/admin">
+          <Link to="/login">
             <Button size="sm" variant="outline" className="bg-graphik-dark border-graphik-light-grey hover:bg-graphik-light-grey/20">
               <Settings size={16} className="mr-1" />
               Admin
@@ -85,7 +85,7 @@ const Navbar = () => {
                 </Link>
               ))}
               <div className="pt-4 border-t border-graphik-light-grey space-y-3">
-                <Link to="/admin" onClick={() => setIsOpen(false)} className="block">
+                <Link to="/login" onClick={() => setIsOpen(false)} className="block">
                   <Button variant="outline" className="w-full bg-graphik-dark border-graphik-light-grey hover:bg-graphik-light-grey/20">
                     <Settings size={16} className="mr-1" />
                     Admin
