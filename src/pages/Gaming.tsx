@@ -30,7 +30,7 @@ const Gaming = () => {
           title="Gaming & Jeux Vidéo"
           subtitle="Crédits et Abonnements"
           description="Boostez votre expérience de jeu avec nos cartes, crédits et abonnements pour les plateformes les plus populaires"
-          backgroundImage="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&q=80&w=1600"
+          backgroundImage="https://assets.euromoneydigital.com/dims4/default/01fc673/2147483647/strip/true/crop/995x559+0+0/resize/840x472!/quality/90/?url=http%3A%2F%2Feuromoney-brightspot.s3.amazonaws.com%2Fa5%2F90%2F0f1167c248d59035af5b47af3fc6%2Fgaming-virtual-blue-adobestock.jpg"
         />
 
         <GamingCredits onSubscribe={handleSubscribe} />
