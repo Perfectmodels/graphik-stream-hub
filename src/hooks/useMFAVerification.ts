@@ -27,13 +27,13 @@ export const useMFAVerification = ({ userId, userEmail, onBack }: UseMFAVerifica
       if (!userId) return;
       
       try {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('user_mfa_settings')
           .select('*')
           .eq('user_id', userId)
-          .single();
+          .maybeSingle();
         
-        if (data && isUserMFASettings(data) && data.sms_mfa_enabled && data.phone_number) {
+        if (!error && data && isUserMFASettings(data) && data.sms_mfa_enabled && data.phone_number) {
           setUserPhoneNumber(data.phone_number);
         }
       } catch (error) {
@@ -127,7 +127,7 @@ export const useMFAVerification = ({ userId, userEmail, onBack }: UseMFAVerifica
         .eq('code', mfaCode)
         .eq('type', activeMethod)
         .gt('expires_at', now)
-        .single();
+        .maybeSingle();
       
       if (error || !data || !isMFAVerificationCode(data)) {
         throw new Error("Code de vérification invalide ou expiré");

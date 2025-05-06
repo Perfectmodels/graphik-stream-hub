@@ -17,7 +17,7 @@ export const useSubscriptionStatus = (
       
       console.log(`Updating subscription ${id} to status: ${status}`);
       
-      // Update subscription status without specifying any timestamp fields
+      // Update subscription status - secure approach
       // Let the database trigger handle the updated_at field
       const { error } = await supabase
         .from('subscription_requests')
