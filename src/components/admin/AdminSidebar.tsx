@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { LogOut, LayoutDashboard, Users, CreditCard, Settings } from "lucide-react";
+import { LogOut, LayoutDashboard, Users, CreditCard, Settings, Target, Bell, BarChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface AdminSidebarProps {
@@ -23,6 +23,8 @@ const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { path: "/admin/dashboard", label: "Tableau de bord", icon: <LayoutDashboard className="h-5 w-5" /> },
     { path: "/admin/users", label: "Utilisateurs", icon: <Users className="h-5 w-5" /> },
     { path: "/admin/subscriptions", label: "Abonnements", icon: <CreditCard className="h-5 w-5" /> },
+    { path: "/admin/targets", label: "Objectifs", icon: <Target className="h-5 w-5" /> },
+    { path: "/admin/analytics", label: "Statistiques", icon: <BarChart className="h-5 w-5" /> },
     { path: "/admin/settings", label: "Paramètres", icon: <Settings className="h-5 w-5" /> }
   ];
 

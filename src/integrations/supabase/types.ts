@@ -103,6 +103,77 @@ export type Database = {
         }
         Relationships: []
       }
+      dashboard_metrics: {
+        Row: {
+          created_at: string
+          end_date: string
+          id: string
+          metric_name: string
+          metric_period: string
+          metric_value: number
+          start_date: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          end_date: string
+          id?: string
+          metric_name: string
+          metric_period: string
+          metric_value: number
+          start_date: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          end_date?: string
+          id?: string
+          metric_name?: string
+          metric_period?: string
+          metric_value?: number
+          start_date?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      dashboard_notifications: {
+        Row: {
+          admin_id: string | null
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          notification_type: string
+          title: string
+        }
+        Insert: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          notification_type: string
+          title: string
+        }
+        Update: {
+          admin_id?: string | null
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          notification_type?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dashboard_notifications_admin_id_fkey"
+            columns: ["admin_id"]
+            isOneToOne: false
+            referencedRelation: "admin_users"
+            referencedColumns: ["user_id"]
+          },
+        ]
+      }
       mfa_verification_codes: {
         Row: {
           code: string
@@ -204,6 +275,45 @@ export type Database = {
           max_uses?: number | null
           valid_from?: string
           valid_until?: string | null
+        }
+        Relationships: []
+      }
+      sales_targets: {
+        Row: {
+          created_at: string
+          current_value: number
+          end_date: string
+          id: string
+          start_date: string
+          target_description: string | null
+          target_name: string
+          target_period: string
+          target_value: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_value?: number
+          end_date: string
+          id?: string
+          start_date: string
+          target_description?: string | null
+          target_name: string
+          target_period: string
+          target_value: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_value?: number
+          end_date?: string
+          id?: string
+          start_date?: string
+          target_description?: string | null
+          target_name?: string
+          target_period?: string
+          target_value?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -342,6 +452,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_activities: {
+        Row: {
+          activity_data: Json | null
+          activity_type: string
+          created_at: string
+          device_info: string | null
+          id: string
+          ip_address: string | null
+          user_id: string | null
+        }
+        Insert: {
+          activity_data?: Json | null
+          activity_type: string
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          activity_data?: Json | null
+          activity_type?: string
+          created_at?: string
+          device_info?: string | null
+          id?: string
+          ip_address?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       user_mfa_settings: {
         Row: {
