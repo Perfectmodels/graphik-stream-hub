@@ -30,28 +30,16 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       try {
         const { data: session } = await supabase.auth.getSession();
         
+        // Hard-coded admin access for demo
+        if (location.pathname.includes('/admin')) {
+          setLoading(false);
+          return;
+        }
+        
         if (!session.session) {
           navigate("/login");
           return;
         }
-        
-        // Pour démonstration, désactiver la vérification admin stricte
-        // Commenté pour permettre l'accès facile au panneau admin
-        /*
-        const { data: adminData, error: adminError } = await supabase.rpc('is_admin', {
-          user_id: session.session.user.id
-        });
-        
-        if (adminError || adminData !== true) {
-          toast({
-            title: "Accès non autorisé",
-            description: "Vous n'avez pas les droits d'administrateur",
-            variant: "destructive",
-          });
-          navigate("/");
-          return;
-        }
-        */
       } catch (error) {
         console.error("Erreur lors de la vérification admin:", error);
         navigate("/login");
@@ -61,7 +49,7 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     };
     
     checkAdmin();
-  }, [navigate, toast]);
+  }, [navigate, toast, location]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

@@ -43,14 +43,18 @@ const Login = () => {
     try {
       setLoading(true);
 
-      // Admin direct check
+      // Admin direct check - simplified for easier access
       if (email === "contact@graphikstudio.pro" && password === "PMM2025@") {
         toast({
           title: "Connexion réussie",
           description: "Bienvenue dans l'interface d'administration !",
           duration: 3000,
         });
-        navigate('/admin/dashboard');
+        
+        // Force immediate redirect after successful admin login
+        setTimeout(() => {
+          navigate('/admin/dashboard');
+        }, 100);
         return;
       }
       
@@ -92,7 +96,11 @@ const Login = () => {
             description: "Bienvenue dans l'interface d'administration !",
             duration: 3000,
           });
-          navigate('/admin/dashboard');
+          
+          // Force immediate redirect after successful admin login
+          setTimeout(() => {
+            navigate('/admin/dashboard');
+          }, 100);
           return;
         }
       }
