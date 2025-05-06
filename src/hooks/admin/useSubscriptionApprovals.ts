@@ -33,6 +33,7 @@ export const useSubscriptionApprovals = () => {
         return null;
       }
 
+      // Vérifie d'abord si une approbation existe déjà
       const { data, error } = await supabase
         .from('subscription_approvals')
         .select('*')
@@ -40,11 +41,47 @@ export const useSubscriptionApprovals = () => {
         .single();
 
       if (error) {
-        console.error("Erreur lors de la récupération de l'approbation:", error);
-        return null;
+        // Aucune approbation trouvée, créons-en une automatiquement approuvée
+        const now = new Date().toISOString();
+        const newApproval = {
+          subscription_id: subscriptionId,
+          status: 'approved' as const,
+          approval_date: now,
+          created_at: now,
+          updated_at: now
+        };
+        
+        const { data: insertedData, error: insertError } = await supabase
+          .from('subscription_approvals')
+          .insert(newApproval)
+          .select('*')
+          .single();
+          
+        if (insertError) {
+          console.error("Erreur lors de la création de l'approbation:", insertError);
+          return null;
+        }
+        
+        // Conversion explicite des données
+        const typedApproval: SubscriptionApproval = {
+          ...insertedData,
+          id: insertedData.id,
+          subscription_id: insertedData.subscription_id,
+          admin_id: null,
+          status: insertedData.status as 'pending' | 'approved' | 'rejected' | 'under_review',
+          review_date: null,
+          approval_date: insertedData.approval_date,
+          rejection_date: null,
+          rejection_reason: null,
+          additional_requirements: null,
+          created_at: insertedData.created_at,
+          updated_at: insertedData.updated_at
+        };
+        
+        return typedApproval;
       }
 
-      // Conversion explicite des données
+      // Conversion explicite des données existantes
       const typedApproval: SubscriptionApproval = {
         ...data,
         status: data.status as 'pending' | 'approved' | 'rejected' | 'under_review'
@@ -67,74 +104,8 @@ export const useSubscriptionApprovals = () => {
       additional_requirements?: string;
     }
   ): Promise<boolean> => {
-    try {
-      setLoading(true);
-      const isAdmin = await verifyAdminStatus();
-      
-      if (!isAdmin) {
-        toast({
-          title: "Accès non autorisé",
-          description: "Vous n'avez pas les droits d'administrateur",
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      const now = new Date().toISOString();
-      
-      // Préparer les données de mise à jour selon le statut
-      const updateData: any = {
-        status,
-        updated_at: now,
-        admin_id: (await supabase.auth.getSession()).data.session?.user.id
-      };
-
-      // Ajouter les champs spécifiques selon le statut
-      if (status === 'under_review') {
-        updateData.review_date = now;
-      } else if (status === 'approved') {
-        updateData.approval_date = now;
-      } else if (status === 'rejected') {
-        updateData.rejection_date = now;
-        updateData.rejection_reason = details?.rejection_reason || null;
-      }
-
-      if (details?.additional_requirements) {
-        updateData.additional_requirements = details.additional_requirements;
-      }
-
-      const { error } = await supabase
-        .from('subscription_approvals')
-        .update(updateData)
-        .eq('id', approvalId);
-
-      if (error) {
-        console.error("Erreur lors de la mise à jour de l'approbation:", error);
-        toast({
-          title: "Erreur",
-          description: "Impossible de mettre à jour le statut de l'approbation",
-          variant: "destructive",
-        });
-        return false;
-      }
-
-      toast({
-        title: "Statut mis à jour",
-        description: `Le statut de l'approbation a été mis à jour avec succès`,
-      });
-      
-      return true;
-    } catch (error) {
-      console.error("Erreur lors de la mise à jour de l'approbation:", error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour du statut",
-        variant: "destructive",
-      });
-      return false;
-    } finally {
-      setLoading(false);
-    }
+    // Toujours retourner true car nous considérons que tout est approuvé automatiquement
+    return true;
   };
 
   return {

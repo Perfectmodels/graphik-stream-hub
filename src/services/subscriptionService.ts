@@ -2,6 +2,7 @@
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SubscriptionFormValues, getServicePrice } from "@/utils/subscriptionUtils";
+import { format } from "date-fns";
 
 export const sendSubscriptionDocuments = async (subscriptionId: number, subscriptionData: any): Promise<boolean> => {
   try {
@@ -54,9 +55,11 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
   // Calcul du prix total
   const totalPrice = getServicePrice(values.serviceType, values.durationMonths);
   
-  // Calcul des dates
-  const startDate = new Date();
-  const endDate = new Date();
+  // Utiliser la date de début fournie par l'utilisateur
+  const startDate = values.startDate;
+  
+  // Calcul de la date de fin basée sur la durée choisie
+  const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + parseInt(values.durationMonths));
   
   // Préparation des données
@@ -70,9 +73,9 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
     payment_method: values.paymentMethod,
     additional_info: values.additionalInfo,
     total_price: totalPrice,
-    start_date: startDate.toISOString().split('T')[0],
-    end_date: endDate.toISOString().split('T')[0],
-    status: "pending"
+    start_date: format(startDate, 'yyyy-MM-dd'),
+    end_date: format(endDate, 'yyyy-MM-dd'),
+    status: "approved" // Changé de "pending" à "approved" pour approbation automatique
   };
   
   // Envoi à Supabase

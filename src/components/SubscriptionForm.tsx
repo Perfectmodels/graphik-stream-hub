@@ -12,7 +12,13 @@ import { submitSubscriptionForm } from "@/services/subscriptionService";
 import PersonalInfoFields from "./subscription/PersonalInfoFields";
 import ServiceSelectionFields from "./subscription/ServiceSelectionFields";
 import AdditionalInfoField from "./subscription/AdditionalInfoField";
-import { AlertCircle, Phone } from "lucide-react";
+import { AlertCircle, Phone, Calendar } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import { cn } from "@/lib/utils";
 
 interface SubscriptionFormProps {
   defaultServiceType?: string;
@@ -47,6 +53,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       durationMonths: "",
       paymentMethod: "",
       additionalInfo: "",
+      startDate: new Date(), // Ajout d'une date par défaut
     },
   });
 
@@ -100,6 +107,51 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <PersonalInfoFields form={form} disabled={isSubmitting} />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Nouveau champ pour la date de début */}
+              <FormField
+                control={form.control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col">
+                    <FormLabel className="text-white">Date de début</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal bg-graphik-dark border-graphik-light-grey text-white",
+                              !field.value && "text-muted-foreground"
+                            )}
+                            disabled={isSubmitting}
+                          >
+                            {field.value ? (
+                              format(field.value, "dd/MM/yyyy", { locale: fr })
+                            ) : (
+                              <span>Sélectionner une date</span>
+                            )}
+                            <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 bg-graphik-dark border-graphik-light-grey" align="start">
+                        <CalendarComponent
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          initialFocus
+                          className="bg-graphik-dark text-white pointer-events-auto"
+                          locale={fr}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
             
             <ServiceSelectionFields form={form} disabled={isSubmitting} />
             

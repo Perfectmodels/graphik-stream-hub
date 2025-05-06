@@ -11,6 +11,7 @@ export const subscriptionFormSchema = z.object({
   durationMonths: z.string().min(1, { message: "Veuillez sélectionner une durée" }),
   paymentMethod: z.string().min(1, { message: "Veuillez sélectionner un mode de paiement" }),
   additionalInfo: z.string().optional(),
+  startDate: z.date({ required_error: "La date de début est requise" }),
 });
 
 // Type for the form schema

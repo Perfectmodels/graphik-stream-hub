@@ -17,13 +17,20 @@ const ApprovalDetails: React.FC<ApprovalDetailsProps> = ({ approval, isLoading }
   }
 
   if (!approval) {
-    return <div className="text-center py-4 text-gray-400">Aucune information d'approbation disponible</div>;
+    return (
+      <div className="space-y-4 text-sm">
+        <div className="text-center py-4 text-gray-400">
+          Toutes les demandes d'abonnement sont automatiquement approuvées.
+          <p className="mt-2 text-green-500">Aucune action nécessaire de la part de l'administrateur.</p>
+        </div>
+      </div>
+    );
   }
 
   const getStatusBadge = () => {
     switch (approval.status) {
       case 'pending':
-        return <Badge variant="outline" className="bg-amber-500/20 text-amber-500 border-amber-500/30">En attente</Badge>;
+        return <Badge variant="outline" className="bg-amber-500/20 text-amber-500 border-amber-500/30">En attente (Auto-approuvé)</Badge>;
       case 'approved':
         return <Badge variant="outline" className="bg-green-500/20 text-green-500 border-green-500/30">Approuvé</Badge>;
       case 'rejected':
@@ -62,33 +69,10 @@ const ApprovalDetails: React.FC<ApprovalDetailsProps> = ({ approval, isLoading }
         <p className="text-white mt-1">{formatDate(approval.created_at)}</p>
       </div>
       
-      {approval.review_date && (
-        <div>
-          <span className="text-gray-400">Mise en examen:</span>
-          <p className="text-white mt-1">{formatDate(approval.review_date)}</p>
-        </div>
-      )}
-      
-      {approval.approval_date && (
-        <div>
-          <span className="text-gray-400">Date d'approbation:</span>
-          <p className="text-white mt-1">{formatDate(approval.approval_date)}</p>
-        </div>
-      )}
-      
-      {approval.rejection_date && (
-        <div>
-          <span className="text-gray-400">Date de rejet:</span>
-          <p className="text-white mt-1">{formatDate(approval.rejection_date)}</p>
-        </div>
-      )}
-      
-      {approval.rejection_reason && (
-        <div>
-          <span className="text-gray-400">Motif de rejet:</span>
-          <p className="text-white mt-1">{approval.rejection_reason}</p>
-        </div>
-      )}
+      <div>
+        <span className="text-gray-400">Statut:</span>
+        <p className="text-white mt-1">Approuvé automatiquement</p>
+      </div>
       
       {approval.additional_requirements && (
         <div>
