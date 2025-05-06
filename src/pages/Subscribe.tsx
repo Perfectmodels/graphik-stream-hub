@@ -14,7 +14,7 @@ const Subscribe = () => {
           title="S'abonner à nos services"
           subtitle="Demande d'abonnement"
           description="Remplissez le formulaire ci-dessous pour souscrire à nos services de streaming et de gaming"
-          backgroundImage="https://images.unsplash.com/photo-1603969072881-b0fc7f3d77d7?auto=format&fit=crop&q=80&w=1600"
+          backgroundImage="https://image.son-video.com/images/illustration/guides/comment-bien-choisir-son-service-de-streaming-audio-et-vod/SVDGUI-202311-ChoisirServiceDeStreaming-HeroHeader.jpg"
         />
 
         <section className="container mx-auto px-4 py-20">
