@@ -1,6 +1,6 @@
 
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { toast } from "sonner";
 import { subscriptionFormSchema, SubscriptionFormValues } from "@/utils/subscriptionUtils";
-import { submitSubscriptionForm, sendSubscriptionDocuments } from "@/services/subscriptionService";
+import { submitSubscriptionForm } from "@/services/subscriptionService";
 import PersonalInfoFields from "./subscription/PersonalInfoFields";
 import ServiceSelectionFields from "./subscription/ServiceSelectionFields";
 import AdditionalInfoField from "./subscription/AdditionalInfoField";
@@ -26,7 +26,15 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
   isModal = false
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Récupérer le service depuis les state params de la navigation
+  useEffect(() => {
+    if (location.state && location.state.serviceType) {
+      form.setValue("serviceType", location.state.serviceType);
+    }
+  }, [location.state]);
 
   const form = useForm<SubscriptionFormValues>({
     resolver: zodResolver(subscriptionFormSchema),
@@ -49,22 +57,10 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       // Submit the form data and get the result
       const data = await submitSubscriptionForm(values);
       
-      // Send subscription documents via WhatsApp
-      try {
-        await sendSubscriptionDocuments(data.id);
-        
-        // Notification de succès
-        toast.success("Demande d'abonnement envoyée avec succès", {
-          description: "Les détails de votre abonnement seront envoyés par WhatsApp. Nous vous contacterons bientôt."
-        });
-      } catch (sendError) {
-        console.error("Erreur lors de l'envoi de la notification WhatsApp:", sendError);
-        
-        // Le formulaire a été enregistré, mais l'envoi de la notification a échoué
-        toast.success("Demande d'abonnement enregistrée", {
-          description: "Votre demande a été enregistrée, mais l'envoi de la notification WhatsApp a échoué."
-        });
-      }
+      // Notification de succès
+      toast.success("Demande d'abonnement envoyée avec succès", {
+        description: "Les détails de votre abonnement seront envoyés par WhatsApp. Nous vous contacterons bientôt."
+      });
       
       // Redirection ou fermeture du modal
       if (isModal && onClose) {

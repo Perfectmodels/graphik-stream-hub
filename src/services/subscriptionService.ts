@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { SubscriptionFormValues, getServicePrice } from "@/utils/subscriptionUtils";
 
-export const sendSubscriptionDocuments = async (subscriptionId: number): Promise<boolean> => {
+export const sendSubscriptionDocuments = async (subscriptionId: number, subscriptionData: any): Promise<boolean> => {
   try {
     const { error } = await supabase.functions.invoke('send-subscription', {
       body: { subscriptionId },
@@ -17,8 +17,28 @@ export const sendSubscriptionDocuments = async (subscriptionId: number): Promise
       return false;
     }
     
-    toast.success("Notification envoyée", {
-      description: "Les détails de votre demande ont été envoyés sur WhatsApp."
+    // Construction du message WhatsApp
+    const message = encodeURIComponent(`🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
+      `*Client:* ${subscriptionData.full_name}\n` +
+      `*Téléphone:* ${subscriptionData.phone}\n` +
+      `*Email:* ${subscriptionData.email}\n` +
+      `*Service:* ${subscriptionData.service_type}\n` +
+      `*Durée:* ${subscriptionData.duration_months} mois\n` +
+      `*Prix total:* ${subscriptionData.total_price} FCFA\n` +
+      `*Paiement:* ${subscriptionData.payment_method}\n\n` +
+      `Date de début: ${subscriptionData.start_date}\n` +
+      `Date de fin: ${subscriptionData.end_date}\n` +
+      (subscriptionData.address ? `Adresse: ${subscriptionData.address}\n` : "") +
+      (subscriptionData.additional_info ? `\n*Informations supplémentaires:*\n${subscriptionData.additional_info}\n` : "") +
+      `\n*ID de la demande:* ${subscriptionId}`);
+    
+    // Ouverture de WhatsApp dans une nouvelle fenêtre
+    const whatsappNumber = "+24174066461";
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    
+    toast.success("Demande envoyée", {
+      description: "Les détails de votre demande ont été envoyés. Vous allez être redirigé vers WhatsApp."
     });
     return true;
   } catch (error) {
@@ -63,6 +83,9 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
     .single();
     
   if (error) throw error;
+
+  // Envoi des détails par WhatsApp
+  await sendSubscriptionDocuments(data.id, subscriptionData);
 
   return data;
 };

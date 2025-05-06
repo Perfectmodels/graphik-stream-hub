@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface PlatformCardProps {
   name: string;
@@ -22,6 +22,8 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
   buttonText = "S'abonner",
   buttonAction,
 }) => {
+  const navigate = useNavigate();
+  
   // Fonction pour convertir le prix en FCFA si nécessaire
   const formatPrice = (priceStr: string | undefined) => {
     if (!priceStr) return '';
@@ -31,6 +33,17 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
     
     // Sinon on remplace € par FCFA
     return priceStr.replace('€', 'FCFA');
+  };
+  
+  // Fonction pour gérer le clic sur le bouton
+  const handleButtonClick = () => {
+    if (buttonAction) {
+      // Si une action personnalisée est fournie, on l'utilise
+      buttonAction();
+    } else {
+      // Sinon on navigue vers la page d'abonnement avec le service présélectionné
+      navigate("/subscribe", { state: { serviceType: name } });
+    }
   };
 
   return (
@@ -52,13 +65,12 @@ const PlatformCard: React.FC<PlatformCardProps> = ({
             ))}
           </ul>
         )}
-        <Link to="/subscribe" state={{ serviceType: name }}>
-          <Button 
-            className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mt-auto"
-          >
-            {buttonText}
-          </Button>
-        </Link>
+        <Button 
+          className="w-full bg-graphik-blue hover:bg-graphik-blue/80 mt-auto"
+          onClick={handleButtonClick}
+        >
+          {buttonText}
+        </Button>
       </div>
     </div>
   );

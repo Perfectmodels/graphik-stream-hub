@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 interface ServiceCardProps {
   title: string;
@@ -16,6 +16,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
   image,
   link,
 }) => {
+  const navigate = useNavigate();
+  
+  const handleButtonClick = () => {
+    navigate("/subscribe");
+  };
+  
   return (
     <div className="service-card card-gradient-hover">
       <div className="relative h-40 overflow-hidden">
@@ -28,11 +34,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({
       <div className="p-6">
         <h3 className="text-xl font-bold text-white mb-2">{title}</h3>
         <p className="text-gray-300 mb-4">{description}</p>
-        <Link to="/subscribe">
-          <Button variant="secondary" className="w-full bg-graphik-purple hover:bg-graphik-violet">
-            S'abonner
-          </Button>
-        </Link>
+        <Button 
+          variant="secondary" 
+          className="w-full bg-graphik-purple hover:bg-graphik-violet"
+          onClick={handleButtonClick}
+        >
+          S'abonner
+        </Button>
       </div>
     </div>
   );

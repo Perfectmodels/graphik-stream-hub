@@ -96,11 +96,14 @@ serve(async (req) => {
 
 async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Promise<boolean> {
   try {
+    // Numéro WhatsApp spécifié par l'utilisateur
+    const whatsappNumber = "+24174066461";
+    
     // Format the phone number to ensure it's in international format
-    const phoneNumber = formatPhoneNumber(subscription.phone);
+    const customerPhone = formatPhoneNumber(subscription.phone);
     
     // Format WhatsApp message
-    const message = `🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
+    const message = encodeURIComponent(`🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
       `*Client:* ${subscription.full_name}\n` +
       `*Téléphone:* ${subscription.phone}\n` +
       `*Email:* ${subscription.email}\n` +
@@ -112,30 +115,20 @@ async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Prom
       `Date de fin: ${subscription.end_date}\n` +
       (subscription.address ? `Adresse: ${subscription.address}\n` : "") +
       (subscription.additional_info ? `\n*Informations supplémentaires:*\n${subscription.additional_info}\n` : "") +
-      `\n*ID de la demande:* ${subscription.id}`;
+      `\n*ID de la demande:* ${subscription.id}`);
     
-    console.log(`Préparation du message WhatsApp pour: ${phoneNumber}`);
-    console.log("Contenu du message WhatsApp:", message);
+    console.log(`Préparation du message WhatsApp pour: ${whatsappNumber}`);
     
-    // In a real environment, you would use WhatsApp Business API here
-    // This function is currently just logging the message
-    // You would need to integrate with a WhatsApp API service like Twilio or MessageBird
+    // Construction de l'URL WhatsApp
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
     
-    // Integration example (simulated for now):
-    // const whatsappApiResult = await fetch('your-whatsapp-api-url', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ 
-    //     to: phoneNumber, 
-    //     message: message 
-    //   })
-    // });
+    console.log("URL WhatsApp:", whatsappUrl);
     
-    // Just returning true for simulation purposes
-    // In a real implementation, you'd check whatsappApiResult.ok
+    // Dans un environnement serveur, on ne peut pas ouvrir directement WhatsApp
+    // Nous retournons donc un succès pour indiquer que l'URL a été générée
     return true;
   } catch (error) {
-    console.error("Error sending WhatsApp message:", error);
+    console.error("Error preparing WhatsApp message:", error);
     return false;
   }
 }
