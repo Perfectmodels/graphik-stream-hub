@@ -8,8 +8,8 @@ export type StatData = {
   pending: number;
   approved: number;
   rejected: number;
-  active: number; // Ajout de la propriété manquante
-  suspended: number; // Pour compléter le modèle de données
+  active: number;
+  suspended: number;
   byService: Record<string, number>;
   byDuration: Record<string, number>;
   monthlyRevenue: Record<string, number>;
@@ -22,8 +22,8 @@ export const useSubscriptionStats = () => {
     pending: 0,
     approved: 0,
     rejected: 0,
-    active: 0, // Initialisation de la propriété manquante
-    suspended: 0, // Pour compléter le modèle de données
+    active: 0,
+    suspended: 0,
     byService: {},
     byDuration: {},
     monthlyRevenue: {},
@@ -48,8 +48,8 @@ export const useSubscriptionStats = () => {
         pending: 0,
         approved: 0, 
         rejected: 0,
-        active: 0, // Initialisation de la propriété active
-        suspended: 0, // Pour compléter le modèle de données
+        active: 0,
+        suspended: 0,
         byService: {},
         byDuration: {},
         monthlyRevenue: {},

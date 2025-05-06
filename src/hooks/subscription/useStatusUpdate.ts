@@ -21,7 +21,7 @@ export const useStatusUpdate = () => {
         .from('subscription_requests')
         .update({ 
           status: status,
-          updated_at: new Date().toISOString() // Corriger cette ligne, utilisez updated_at au lieu de modified_at
+          updated_at: new Date().toISOString()
         })
         .eq('id', id);
         
