@@ -1,0 +1,112 @@
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Check, X, MessageSquare, Play, Pause, Eye, Plus } from "lucide-react";
+import { Subscription } from "@/types/subscription";
+
+interface SubscriptionActionsProps {
+  subscription: Subscription;
+  processingIds: number[];
+  onViewDetails: (subscription: Subscription) => void;
+  onAddNote: (subscription: Subscription) => void;
+  updateSubscriptionStatus: (id: number, status: 'approved' | 'rejected' | 'active' | 'suspended') => Promise<void>;
+}
+
+const SubscriptionActions: React.FC<SubscriptionActionsProps> = ({
+  subscription,
+  processingIds,
+  onViewDetails,
+  onAddNote,
+  updateSubscriptionStatus
+}) => {
+  const getAvailableActions = (sub: Subscription) => {
+    switch (sub.status) {
+      case 'pending':
+        return (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-green-500 text-green-500 hover:bg-green-500/20"
+              onClick={() => updateSubscriptionStatus(sub.id, 'approved')}
+              disabled={processingIds.includes(sub.id)}
+            >
+              <Check className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="border-red-500 text-red-500 hover:bg-red-500/20"
+              onClick={() => updateSubscriptionStatus(sub.id, 'rejected')}
+              disabled={processingIds.includes(sub.id)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </>
+        );
+      case 'approved':
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
+            onClick={() => updateSubscriptionStatus(sub.id, 'active')}
+            disabled={processingIds.includes(sub.id)}
+          >
+            <Play className="h-4 w-4" />
+          </Button>
+        );
+      case 'active':
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-purple-500 text-purple-500 hover:bg-purple-500/20"
+            onClick={() => updateSubscriptionStatus(sub.id, 'suspended')}
+            disabled={processingIds.includes(sub.id)}
+          >
+            <Pause className="h-4 w-4" />
+          </Button>
+        );
+      case 'suspended':
+        return (
+          <Button
+            variant="outline"
+            size="sm"
+            className="border-blue-500 text-blue-500 hover:bg-blue-500/20"
+            onClick={() => updateSubscriptionStatus(sub.id, 'active')}
+            disabled={processingIds.includes(sub.id)}
+          >
+            <Play className="h-4 w-4" />
+          </Button>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex space-x-2">
+      <Button
+        variant="outline"
+        size="sm"
+        className="border-gray-500 text-gray-300 hover:bg-graphik-light-grey/20"
+        onClick={() => onViewDetails(subscription)}
+      >
+        <Eye className="h-4 w-4" />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className="border-amber-500 text-amber-500 hover:bg-amber-500/20"
+        onClick={() => onAddNote(subscription)}
+      >
+        <Plus className="h-4 w-4 mr-1" />
+        <MessageSquare className="h-4 w-4" />
+      </Button>
+      {getAvailableActions(subscription)}
+    </div>
+  );
+};
+
+export default SubscriptionActions;
