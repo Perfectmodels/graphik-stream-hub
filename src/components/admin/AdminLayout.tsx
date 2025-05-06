@@ -19,34 +19,47 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Utiliser localStorage pour éviter des redirections à répétition
+    const isAuthenticated = localStorage.getItem('isAdminAuthenticated');
+    
     const checkAdmin = async () => {
       try {
         const { data: session } = await supabase.auth.getSession();
         
-        // Hard-coded admin access for demo
-        if (location.pathname.includes('/admin')) {
-          setLoading(false);
-          return;
-        }
-        
         if (!session.session) {
-          navigate("/login");
-          return;
+          // Si aucune session active et pas déjà authentifié dans localStorage
+          if (!isAuthenticated) {
+            navigate("/login");
+            return;
+          }
+        } else {
+          // Si une session est active, marquer comme authentifié
+          localStorage.setItem('isAdminAuthenticated', 'true');
         }
       } catch (error) {
         console.error("Erreur lors de la vérification admin:", error);
-        navigate("/login");
+        // On gère l'erreur mais on ne redirige pas forcément
       } finally {
         setLoading(false);
       }
     };
     
     checkAdmin();
-  }, [navigate, toast, location]);
+  }, [navigate]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/login");
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem('isAdminAuthenticated');
+      navigate("/login");
+    } catch (error) {
+      console.error("Erreur de déconnexion:", error);
+      toast({
+        title: "Erreur",
+        description: "Impossible de vous déconnecter",
+        variant: "destructive",
+      });
+    }
   };
 
   const toggleMobileMenu = () => {
