@@ -7,9 +7,11 @@ import SectionHeader from "@/components/SectionHeader";
 import PlatformCard from "@/components/PlatformCard";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useNavigate } from "react-router-dom";
 
 const IPTV = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleSubscribe = (platform: string) => {
     toast({
@@ -17,13 +19,14 @@ const IPTV = () => {
       description: `Vous allez être redirigé vers la page d'abonnement IPTV ${platform}`,
       duration: 3000,
     });
+    // Redirect to subscription page
+    navigate("/subscribe", { state: { serviceType: platform } });
   };
 
   const iptvServices = [
     {
       name: "Xtreme HD IPTV",
       logo: "/placeholder.svg",
-      previewImage: "/images/xtreme-hd-preview.jpg",
       description: "Service IPTV premium avec des milliers de chaînes du monde entier en HD et 4K",
       price: "À partir de 8 529 XOF/mois",
       features: [
@@ -37,7 +40,6 @@ const IPTV = () => {
     {
       name: "Nexott",
       logo: "/placeholder.svg",
-      previewImage: "/images/nexott-preview.jpg",
       description: "Solution IPTV complète avec un support technique réactif et une excellente stabilité",
       price: "À partir de 9 827 XOF/mois",
       features: [
@@ -51,7 +53,6 @@ const IPTV = () => {
     {
       name: "Netfly TV",
       logo: "/placeholder.svg",
-      previewImage: "/images/netfly-preview.jpg",
       description: "Service IPTV avec une interface intuitive et des mises à jour régulières",
       price: "À partir de 6 554 XOF/mois",
       features: [
@@ -65,7 +66,6 @@ const IPTV = () => {
     {
       name: "ReflexSat",
       logo: "/placeholder.svg",
-      previewImage: "/images/reflexsat-preview.jpg",
       description: "Service fiable avec une attention particulière aux chaînes sportives et événements en direct",
       price: "À partir de 7 861 XOF/mois",
       features: [
@@ -81,21 +81,27 @@ const IPTV = () => {
   return (
     <div>
       <Navbar />
-      <Hero />
-      <SectionHeader title="Découvrez nos services IPTV" />
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {iptvServices.map((service) => (
-          <PlatformCard
-            key={service.name}
-            name={service.name}
-            logo={service.logo}
-            previewImage={service.previewImage}
-            description={service.description}
-            price={service.price}
-            features={service.features}
-            buttonAction={() => handleSubscribe(service.name)}
-          />
-        ))}
+      <Hero 
+        title="Services IPTV Premium" 
+        subtitle="Accès mondial aux chaînes TV"
+        description="Découvrez nos services IPTV de haute qualité pour accéder à des milliers de chaînes du monde entier"
+        backgroundImage="https://cdn.pixabay.com/photo/2020/04/08/16/32/server-5017527_1280.jpg"
+      />
+      <div className="container mx-auto px-4 py-12">
+        <SectionHeader title="Découvrez nos services IPTV" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+          {iptvServices.map((service) => (
+            <PlatformCard
+              key={service.name}
+              name={service.name}
+              logo={service.logo}
+              description={service.description}
+              price={service.price}
+              features={service.features}
+              buttonAction={() => handleSubscribe(service.name)}
+            />
+          ))}
+        </div>
       </div>
       <Footer />
     </div>
