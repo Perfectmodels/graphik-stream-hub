@@ -1,3 +1,4 @@
+
 import React from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -22,7 +23,7 @@ const IPTV = () => {
     {
       name: "Xtreme HD IPTV",
       logo: "/placeholder.svg",
-      previewImage: "/images/xtreme-hd-preview.jpg", // Aperçu de l'image ajouté
+      previewImage: "/images/xtreme-hd-preview.jpg",
       description: "Service IPTV premium avec des milliers de chaînes du monde entier en HD et 4K",
       price: "À partir de 8 529 XOF/mois",
       features: [
@@ -36,7 +37,7 @@ const IPTV = () => {
     {
       name: "Nexott",
       logo: "/placeholder.svg",
-      previewImage: "/images/nexott-preview.jpg", // Aperçu de l'image ajouté
+      previewImage: "/images/nexott-preview.jpg",
       description: "Solution IPTV complète avec un support technique réactif et une excellente stabilité",
       price: "À partir de 9 827 XOF/mois",
       features: [
@@ -50,7 +51,7 @@ const IPTV = () => {
     {
       name: "Netfly TV",
       logo: "/placeholder.svg",
-      previewImage: "/images/netfly-preview.jpg", // Aperçu de l'image ajouté
+      previewImage: "/images/netfly-preview.jpg",
       description: "Service IPTV avec une interface intuitive et des mises à jour régulières",
       price: "À partir de 6 554 XOF/mois",
       features: [
@@ -64,7 +65,7 @@ const IPTV = () => {
     {
       name: "ReflexSat",
       logo: "/placeholder.svg",
-      previewImage: "/images/reflexsat-preview.jpg", // Aperçu de l'image ajouté
+      previewImage: "/images/reflexsat-preview.jpg",
       description: "Service fiable avec une attention particulière aux chaînes sportives et événements en direct",
       price: "À partir de 7 861 XOF/mois",
       features: [
