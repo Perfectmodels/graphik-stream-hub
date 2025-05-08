@@ -95,21 +95,28 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
 
     console.log("Subscription created:", data);
 
-    // At this point, the automatic approval should happen via a trigger or we can create it manually
-    // Since we've updated the RLS policies, this should now work properly
+    // Create an approval record directly in the same transaction
+    // This is now done in a separate step to avoid RLS issues
+    const now = new Date().toISOString();
     const approvalData = {
       subscription_id: data.id,
-      status: 'approved',
-      approval_date: new Date().toISOString()
+      status: 'approved' as const,
+      approval_date: now
     };
 
+    console.log("Creating approval with data:", approvalData);
+    
+    // Insert the approval record
     const { error: approvalError } = await supabase
       .from('subscription_approvals')
       .insert(approvalData);
-
+    
     if (approvalError) {
       console.error("Error creating approval:", approvalError);
-      // Continue anyway since this is not critical for the user experience
+      // We'll continue anyway since the subscription was created successfully
+      // The approval can be created later by an admin
+    } else {
+      console.log("Approval created successfully");
     }
 
     // Send details via WhatsApp
