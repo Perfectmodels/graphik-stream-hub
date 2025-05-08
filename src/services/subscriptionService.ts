@@ -23,34 +23,34 @@ export const sendSubscriptionDocuments = async (subscriptionId: number, subscrip
       // Continue with WhatsApp message creation even if the function fails
     }
     
-    // Build WhatsApp message
-    const message = encodeURIComponent(`🎮 *NEW SUBSCRIPTION REQUEST* 🎮\n\n` +
+    // Build WhatsApp message with detailed information
+    const message = encodeURIComponent(`🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
       `*Client:* ${subscriptionData.full_name}\n` +
-      `*Phone:* ${subscriptionData.phone}\n` +
+      `*Téléphone:* ${subscriptionData.phone}\n` +
       `*Email:* ${subscriptionData.email}\n` +
       `*Service:* ${subscriptionData.service_type}\n` +
-      `*Duration:* ${subscriptionData.duration_months} months\n` +
-      `*Total price:* ${subscriptionData.total_price} FCFA\n` +
-      `*Payment:* ${subscriptionData.payment_method}\n\n` +
-      `Start date: ${subscriptionData.start_date}\n` +
-      `End date: ${subscriptionData.end_date}\n` +
-      (subscriptionData.address ? `Address: ${subscriptionData.address}\n` : "") +
-      (subscriptionData.additional_info ? `\n*Additional information:*\n${subscriptionData.additional_info}\n` : "") +
-      `\n*Request ID:* ${subscriptionId}`);
+      `*Durée:* ${subscriptionData.duration_months} mois\n` +
+      `*Prix total:* ${subscriptionData.total_price} FCFA\n` +
+      `*Paiement:* ${subscriptionData.payment_method}\n\n` +
+      `*Date de début:* ${subscriptionData.start_date}\n` +
+      `*Date de fin:* ${subscriptionData.end_date}\n` +
+      (subscriptionData.address ? `*Adresse:* ${subscriptionData.address}\n` : "") +
+      (subscriptionData.additional_info ? `\n*Informations supplémentaires:*\n${subscriptionData.additional_info}\n` : "") +
+      `\n*ID de la demande:* ${subscriptionId}`);
     
     // Open WhatsApp in a new window
     const whatsappNumber = "+24174066461";
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
     window.open(whatsappUrl, '_blank');
     
-    toast.success("Request sent", {
-      description: "Your request details have been sent. You will be redirected to WhatsApp."
+    toast.success("Demande envoyée", {
+      description: "Les détails de votre demande ont été envoyés. Vous serez redirigé vers WhatsApp."
     });
     return true;
   } catch (error) {
     console.error("Error calling function:", error);
-    toast.error("Error", {
-      description: "WhatsApp notification couldn't be sent. Our team will contact you shortly."
+    toast.error("Erreur", {
+      description: "La notification WhatsApp n'a pas pu être envoyée. Notre équipe vous contactera sous peu."
     });
     return false;
   }

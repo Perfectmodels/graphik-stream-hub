@@ -102,7 +102,7 @@ async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Prom
     // Format the phone number to ensure it's in international format
     const customerPhone = formatPhoneNumber(subscription.phone);
     
-    // Format WhatsApp message
+    // Format WhatsApp message with more details in French
     const message = encodeURIComponent(`🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
       `*Client:* ${subscription.full_name}\n` +
       `*Téléphone:* ${subscription.phone}\n` +
@@ -110,10 +110,10 @@ async function sendSubscriptionWhatsApp(subscription: SubscriptionRequest): Prom
       `*Service:* ${subscription.service_type}\n` +
       `*Durée:* ${subscription.duration_months} mois\n` +
       `*Prix total:* ${subscription.total_price} FCFA\n` +
-      `*Paiement:* ${subscription.payment_method}\n\n` +
-      `Date de début: ${subscription.start_date}\n` +
-      `Date de fin: ${subscription.end_date}\n` +
-      (subscription.address ? `Adresse: ${subscription.address}\n` : "") +
+      `*Méthode de paiement:* ${subscription.payment_method}\n\n` +
+      `*Date de début:* ${subscription.start_date}\n` +
+      `*Date de fin:* ${subscription.end_date}\n` +
+      (subscription.address ? `*Adresse:* ${subscription.address}\n` : "") +
       (subscription.additional_info ? `\n*Informations supplémentaires:*\n${subscription.additional_info}\n` : "") +
       `\n*ID de la demande:* ${subscription.id}`);
     
