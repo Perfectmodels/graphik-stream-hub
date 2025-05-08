@@ -26,7 +26,7 @@ const ComparisonTable: React.FC = () => {
             <tbody>
               <tr className="border-b border-graphik-light-grey hover:bg-graphik-dark/50">
                 <td className="py-4 px-6 text-white">Netflix</td>
-                <td className="py-4 px-6 text-gray-300">5000 - 15000 FCFA</td>
+                <td className="py-4 px-6 text-gray-300">2500 - 15000 FCFA</td>
                 <td className="py-4 px-6 text-gray-300">4K HDR</td>
                 <td className="py-4 px-6 text-gray-300">1-4</td>
                 <td className="py-4 px-6 text-gray-300">✓</td>
