@@ -1,11 +1,26 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import SubscriptionForm from "@/components/SubscriptionForm";
+import { useLocation } from "react-router-dom";
+import { toast } from "sonner";
 
 const Subscribe = () => {
+  const location = useLocation();
+  const [serviceType, setServiceType] = useState<string>("");
+  
+  // Get service type from location state if available
+  useEffect(() => {
+    if (location.state && location.state.serviceType) {
+      setServiceType(location.state.serviceType);
+      toast.info(`Abonnement à ${location.state.serviceType}`, {
+        description: "Veuillez compléter le formulaire ci-dessous"
+      });
+    }
+  }, [location.state]);
+
   return (
     <>
       <Navbar />
@@ -18,7 +33,7 @@ const Subscribe = () => {
         />
 
         <section className="container mx-auto px-4 py-20">
-          <SubscriptionForm />
+          <SubscriptionForm defaultServiceType={serviceType} />
         </section>
       </main>
       <Footer />

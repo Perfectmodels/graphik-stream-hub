@@ -6,63 +6,68 @@ import { format } from "date-fns";
 
 export const sendSubscriptionDocuments = async (subscriptionId: number, subscriptionData: any): Promise<boolean> => {
   try {
-    const { error } = await supabase.functions.invoke('send-subscription', {
-      body: { subscriptionId },
-    });
-    
-    if (error) {
-      console.error("Erreur lors de l'envoi de la notification:", error);
-      toast.error("Erreur", {
-        description: "La notification WhatsApp n'a pas pu être envoyée. Notre équipe vous contactera sous peu."
+    // Attempt to invoke the edge function if available
+    try {
+      const { error } = await supabase.functions.invoke('send-subscription', {
+        body: { subscriptionId },
       });
-      return false;
+      
+      if (error) {
+        console.error("Error sending notification:", error);
+        toast.error("Error", {
+          description: "WhatsApp notification couldn't be sent. Our team will contact you shortly."
+        });
+      }
+    } catch (functionError) {
+      console.log("Edge function not available or errored:", functionError);
+      // Continue with WhatsApp message creation even if the function fails
     }
     
-    // Construction du message WhatsApp
-    const message = encodeURIComponent(`🎮 *NOUVELLE DEMANDE D'ABONNEMENT* 🎮\n\n` +
+    // Build WhatsApp message
+    const message = encodeURIComponent(`🎮 *NEW SUBSCRIPTION REQUEST* 🎮\n\n` +
       `*Client:* ${subscriptionData.full_name}\n` +
-      `*Téléphone:* ${subscriptionData.phone}\n` +
+      `*Phone:* ${subscriptionData.phone}\n` +
       `*Email:* ${subscriptionData.email}\n` +
       `*Service:* ${subscriptionData.service_type}\n` +
-      `*Durée:* ${subscriptionData.duration_months} mois\n` +
-      `*Prix total:* ${subscriptionData.total_price} FCFA\n` +
-      `*Paiement:* ${subscriptionData.payment_method}\n\n` +
-      `Date de début: ${subscriptionData.start_date}\n` +
-      `Date de fin: ${subscriptionData.end_date}\n` +
-      (subscriptionData.address ? `Adresse: ${subscriptionData.address}\n` : "") +
-      (subscriptionData.additional_info ? `\n*Informations supplémentaires:*\n${subscriptionData.additional_info}\n` : "") +
-      `\n*ID de la demande:* ${subscriptionId}`);
+      `*Duration:* ${subscriptionData.duration_months} months\n` +
+      `*Total price:* ${subscriptionData.total_price} FCFA\n` +
+      `*Payment:* ${subscriptionData.payment_method}\n\n` +
+      `Start date: ${subscriptionData.start_date}\n` +
+      `End date: ${subscriptionData.end_date}\n` +
+      (subscriptionData.address ? `Address: ${subscriptionData.address}\n` : "") +
+      (subscriptionData.additional_info ? `\n*Additional information:*\n${subscriptionData.additional_info}\n` : "") +
+      `\n*Request ID:* ${subscriptionId}`);
     
-    // Ouverture de WhatsApp dans une nouvelle fenêtre
+    // Open WhatsApp in a new window
     const whatsappNumber = "+24174066461";
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
     window.open(whatsappUrl, '_blank');
     
-    toast.success("Demande envoyée", {
-      description: "Les détails de votre demande ont été envoyés. Vous allez être redirigé vers WhatsApp."
+    toast.success("Request sent", {
+      description: "Your request details have been sent. You will be redirected to WhatsApp."
     });
     return true;
   } catch (error) {
-    console.error("Erreur lors de l'appel à la fonction:", error);
-    toast.error("Erreur", {
-      description: "La notification WhatsApp n'a pas pu être envoyée. Notre équipe vous contactera sous peu."
+    console.error("Error calling function:", error);
+    toast.error("Error", {
+      description: "WhatsApp notification couldn't be sent. Our team will contact you shortly."
     });
     return false;
   }
 };
 
 export const submitSubscriptionForm = async (values: SubscriptionFormValues) => {
-  // Calcul du prix total
+  // Calculate total price
   const totalPrice = getServicePrice(values.serviceType, values.durationMonths);
   
-  // Utiliser la date de début fournie par l'utilisateur
+  // Use the start date provided by the user
   const startDate = values.startDate;
   
-  // Calcul de la date de fin basée sur la durée choisie
+  // Calculate end date based on chosen duration
   const endDate = new Date(startDate);
   endDate.setMonth(endDate.getMonth() + parseInt(values.durationMonths));
   
-  // Préparation des données
+  // Prepare data
   const subscriptionData = {
     full_name: values.fullName,
     email: values.email,
@@ -75,20 +80,44 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
     total_price: totalPrice,
     start_date: format(startDate, 'yyyy-MM-dd'),
     end_date: format(endDate, 'yyyy-MM-dd'),
-    status: "approved" // Changé de "pending" à "approved" pour approbation automatique
+    status: "approved" // Changed from "pending" to "approved" for auto-approval
   };
   
-  // Envoi à Supabase
-  const { data, error } = await supabase
-    .from('subscription_requests')
-    .insert(subscriptionData)
-    .select()
-    .single();
-    
-  if (error) throw error;
+  try {
+    // Send to Supabase
+    const { data, error } = await supabase
+      .from('subscription_requests')
+      .insert(subscriptionData)
+      .select()
+      .single();
+      
+    if (error) throw error;
 
-  // Envoi des détails par WhatsApp
-  await sendSubscriptionDocuments(data.id, subscriptionData);
+    console.log("Subscription created:", data);
 
-  return data;
+    // At this point, the automatic approval should happen via a trigger or we can create it manually
+    // Since we've updated the RLS policies, this should now work properly
+    const approvalData = {
+      subscription_id: data.id,
+      status: 'approved',
+      approval_date: new Date().toISOString()
+    };
+
+    const { error: approvalError } = await supabase
+      .from('subscription_approvals')
+      .insert(approvalData);
+
+    if (approvalError) {
+      console.error("Error creating approval:", approvalError);
+      // Continue anyway since this is not critical for the user experience
+    }
+
+    // Send details via WhatsApp
+    await sendSubscriptionDocuments(data.id, subscriptionData);
+
+    return data;
+  } catch (error) {
+    console.error("Error submitting subscription form:", error);
+    throw error;
+  }
 };

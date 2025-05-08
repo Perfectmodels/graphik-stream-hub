@@ -33,7 +33,7 @@ export const useSubscriptionApprovals = () => {
         return null;
       }
 
-      // Vérifie d'abord si une approbation existe déjà
+      // Check if an approval already exists
       const { data, error } = await supabase
         .from('subscription_approvals')
         .select('*')
@@ -41,7 +41,8 @@ export const useSubscriptionApprovals = () => {
         .single();
 
       if (error) {
-        // Aucune approbation trouvée, créons-en une automatiquement approuvée
+        console.log("No approval found, creating one automatically");
+        // No approval found, create one automatically that's approved
         const now = new Date().toISOString();
         const newApproval = {
           subscription_id: subscriptionId,
@@ -58,11 +59,11 @@ export const useSubscriptionApprovals = () => {
           .single();
           
         if (insertError) {
-          console.error("Erreur lors de la création de l'approbation:", insertError);
+          console.error("Error creating approval:", insertError);
           return null;
         }
         
-        // Conversion explicite des données
+        // Explicit type conversion
         const typedApproval: SubscriptionApproval = {
           ...insertedData,
           id: insertedData.id,
@@ -81,7 +82,7 @@ export const useSubscriptionApprovals = () => {
         return typedApproval;
       }
 
-      // Conversion explicite des données existantes
+      // Type conversion for existing approval data
       const typedApproval: SubscriptionApproval = {
         ...data,
         status: data.status as 'pending' | 'approved' | 'rejected' | 'under_review'
@@ -89,7 +90,7 @@ export const useSubscriptionApprovals = () => {
 
       return typedApproval;
     } catch (error) {
-      console.error("Erreur lors de la récupération de l'approbation:", error);
+      console.error("Error fetching approval:", error);
       return null;
     } finally {
       setLoading(false);
@@ -104,7 +105,7 @@ export const useSubscriptionApprovals = () => {
       additional_requirements?: string;
     }
   ): Promise<boolean> => {
-    // Toujours retourner true car nous considérons que tout est approuvé automatiquement
+    // Always return true as we consider everything auto-approved
     return true;
   };
 
