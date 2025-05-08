@@ -1,4 +1,3 @@
-
 import React from "react";
 import PlatformCard from "@/components/PlatformCard";
 
@@ -10,7 +9,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
   const platforms = [
     {
       name: "Netflix",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/1280px-Netflix_2015_logo.svg.png",
+      logo: "https://i.ibb.co/sdwfrdq3/pngegg-4.png",
       description: "Leader mondial avec un immense catalogue de séries, films et documentaires",
       price: "À partir de 2500 FCFA/mois",
       features: [
@@ -23,7 +22,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
     },
     {
       name: "Disney+",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/1280px-Disney%2B_logo.svg.png",
+      logo: "https://i.ibb.co/xq2Q75z5/pngegg-3.png",
       description: "Accès aux univers Disney, Pixar, Marvel, Star Wars et National Geographic",
       price: "À partir de 2500 FCFA/mois",
       features: [
@@ -36,7 +35,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
     },
     {
       name: "Amazon Prime Video",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/1280px-Amazon_Prime_Video_logo.svg.png",
+      logo: "https://i.ibb.co/CpjV0zcv/pngegg-2.png",
       description: "Challenger avec un catalogue en croissance et des productions originales",
       price: "À partir de 2500 FCFA/mois",
       features: [
@@ -49,7 +48,7 @@ const PopularPlatforms: React.FC<PopularPlatformsProps> = ({ onSubscribe }) => {
     },
     {
       name: "Apple TV+",
-      logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Apple_TV_Plus_Logo.svg/1280px-Apple_TV_Plus_Logo.svg.png",
+      logo: "https://i.ibb.co/ptyt7Hh/pngegg-1.png",
       description: "Service premium avec des productions originales de haute qualité",
       price: "À partir de 2500 FCFA/mois",
       features: [
