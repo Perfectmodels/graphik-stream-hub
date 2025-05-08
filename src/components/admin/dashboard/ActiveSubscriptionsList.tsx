@@ -1,5 +1,4 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import SubscriptionStatusBadge from "@/components/admin/SubscriptionStatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,6 +12,8 @@ const ActiveSubscriptionsList: React.FC<ActiveSubscriptionsListProps> = ({
   activeSubscriptions, 
   isLoading 
 }) => {
+  const [subscriptions, setSubscriptions] = useState(activeSubscriptions);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return new Intl.DateTimeFormat('fr-FR', { 
@@ -37,6 +38,34 @@ const ActiveSubscriptionsList: React.FC<ActiveSubscriptionsListProps> = ({
     return "good";
   };
 
+  // Fonction pour valider un abonnement
+  const handleValidate = (subscriptionId: string) => {
+    if (window.confirm("Voulez-vous vraiment valider cet abonnement ?")) {
+      // Simuler la validation en mettant à jour le statut localement
+      const updatedSubscriptions = subscriptions.map((sub) =>
+        sub.id === subscriptionId ? { ...sub, status: "validé" } : sub
+      );
+      setSubscriptions(updatedSubscriptions);
+
+      // Appeler une API si nécessaire
+      console.log(`Abonnement validé : ${subscriptionId}`);
+    }
+  };
+
+  // Fonction pour rejeter un abonnement
+  const handleDecline = (subscriptionId: string) => {
+    if (window.confirm("Voulez-vous vraiment rejeter cet abonnement ?")) {
+      // Simuler le rejet en mettant à jour le statut localement
+      const updatedSubscriptions = subscriptions.map((sub) =>
+        sub.id === subscriptionId ? { ...sub, status: "rejeté" } : sub
+      );
+      setSubscriptions(updatedSubscriptions);
+
+      // Appeler une API si nécessaire
+      console.log(`Abonnement rejeté : ${subscriptionId}`);
+    }
+  };
+
   return (
     <Card className="bg-graphik-grey border-graphik-light-grey">
       <CardHeader>
@@ -58,11 +87,12 @@ const ActiveSubscriptionsList: React.FC<ActiveSubscriptionsListProps> = ({
                   <TableHead className="text-white">Début</TableHead>
                   <TableHead className="text-white">Échéance</TableHead>
                   <TableHead className="text-white">Jours restants</TableHead>
+                  <TableHead className="text-white">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {activeSubscriptions && activeSubscriptions.length > 0 ? (
-                  activeSubscriptions.map((subscription) => {
+                {subscriptions && subscriptions.length > 0 ? (
+                  subscriptions.map((subscription) => {
                     const daysLeft = getRemainingDays(subscription.end_date);
                     const expirationStatus = getExpirationStatus(daysLeft);
                     
@@ -72,18 +102,12 @@ const ActiveSubscriptionsList: React.FC<ActiveSubscriptionsListProps> = ({
                           {subscription.full_name}
                           <div className="text-xs text-gray-400">{subscription.email}</div>
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {subscription.service_type}
-                        </TableCell>
+                        <TableCell className="text-gray-300">{subscription.service_type}</TableCell>
                         <TableCell>
                           <SubscriptionStatusBadge status={subscription.status} />
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          {formatDate(subscription.start_date)}
-                        </TableCell>
-                        <TableCell className="text-gray-300">
-                          {formatDate(subscription.end_date)}
-                        </TableCell>
+                        <TableCell className="text-gray-300">{formatDate(subscription.start_date)}</TableCell>
+                        <TableCell className="text-gray-300">{formatDate(subscription.end_date)}</TableCell>
                         <TableCell>
                           <div className={`px-2 py-1 rounded text-xs inline-flex items-center ${
                             expirationStatus === "expired" ? "bg-red-500/20 text-red-500" :
@@ -94,12 +118,26 @@ const ActiveSubscriptionsList: React.FC<ActiveSubscriptionsListProps> = ({
                             {daysLeft < 0 ? "Expiré" : `${daysLeft} jours`}
                           </div>
                         </TableCell>
+                        <TableCell>
+                          <button 
+                            className="bg-green-500 text-white px-3 py-1 rounded mr-2"
+                            onClick={() => handleValidate(subscription.id)}
+                          >
+                            Valider
+                          </button>
+                          <button 
+                            className="bg-red-500 text-white px-3 py-1 rounded"
+                            onClick={() => handleDecline(subscription.id)}
+                          >
+                            Rejeter
+                          </button>
+                        </TableCell>
                       </TableRow>
                     );
                   })
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                    <TableCell colSpan={7} className="text-center py-8 text-gray-400">
                       Aucun abonnement actif trouvé
                     </TableCell>
                   </TableRow>
