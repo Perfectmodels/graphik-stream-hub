@@ -11,17 +11,27 @@ export const calculateEndDate = (startDate: Date, durationMonths: string) => {
 // Get default price based on service type
 export const getServicePrice = (serviceType: string) => {
   const prices: {[key: string]: number} = {
-    "Netflix": 3500,
+    "Netflix": 2500,
     "Disney+": 2500,
-    "Amazon Prime Video": 2000,
-    "Canal+": 5000,
-    "Spotify": 1500,
-    "Apple Music": 1500,
-    "Xbox Game Pass": 4000,
-    "PlayStation Plus": 4500,
-    "IPTV Standard": 5000,
-    "IPTV Premium": 7500,
-    "IPTV Ultra": 10000
+    "Amazon Prime Video": 2500,
+    "Apple TV+": 2500,
+    "Paramount+": 2500,
+    "Max (ex-HBO Max)": 2500,
+    "Spotify": 2500,
+    "Apple Music": 2500,
+    "Deezer": 2500,
+    "Amazon Music": 2500,
+    "Xbox Game Pass": 2500,
+    "PlayStation Plus": 2500,
+    "Nintendo Switch Online": 2500,
+    "EA Play": 2500,
+    "IPTV Standard": 2500,
+    "IPTV Premium": 2500,
+    "IPTV Ultra": 2500,
+    "Xtreme HD IPTV": 2500,
+    "Nexott": 2500,
+    "Netfly TV": 2500,
+    "ReflexSat": 2500
   };
   return prices[serviceType] || 2500;
 };

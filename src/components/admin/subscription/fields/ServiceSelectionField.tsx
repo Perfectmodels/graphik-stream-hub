@@ -27,7 +27,6 @@ const ServiceSelectionField: React.FC<ServiceSelectionFieldProps> = ({ form }) =
               <SelectItem value="Netflix">Netflix</SelectItem>
               <SelectItem value="Disney+">Disney+</SelectItem>
               <SelectItem value="Amazon Prime Video">Amazon Prime Video</SelectItem>
-              <SelectItem value="Canal+">Canal+</SelectItem>
               <SelectItem value="Apple TV+">Apple TV+</SelectItem>
               <SelectItem value="Paramount+">Paramount+</SelectItem>
               <SelectItem value="Max (ex-HBO Max)">Max (ex-HBO Max)</SelectItem>
@@ -42,6 +41,10 @@ const ServiceSelectionField: React.FC<ServiceSelectionFieldProps> = ({ form }) =
               <SelectItem value="IPTV Standard">IPTV Standard</SelectItem>
               <SelectItem value="IPTV Premium">IPTV Premium</SelectItem>
               <SelectItem value="IPTV Ultra">IPTV Ultra</SelectItem>
+              <SelectItem value="Xtreme HD IPTV">Xtreme HD IPTV</SelectItem>
+              <SelectItem value="Nexott">Nexott</SelectItem>
+              <SelectItem value="Netfly TV">Netfly TV</SelectItem>
+              <SelectItem value="ReflexSat">ReflexSat</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage />

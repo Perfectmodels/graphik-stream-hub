@@ -6,14 +6,97 @@ import Footer from "@/components/Footer";
 import ServiceCard from "@/components/ServiceCard";
 import TestimonialCard from "@/components/TestimonialCard";
 import SectionHeader from "@/components/SectionHeader";
+import TrendingCarousel from "@/components/TrendingCarousel";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { 
-  Play, Headphones, Tv, Gamepad2, ShieldCheck, 
+  Headphones, Tv, Gamepad2, ShieldCheck, 
   CreditCard, HelpCircle, Clock 
 } from "lucide-react";
 
 const Index = () => {
+  // Trending content data
+  const netflixTrending = [
+    {
+      title: "Stranger Things",
+      platform: "Netflix",
+      image: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&q=80&w=600",
+      description: "Dans une petite ville où tout le monde se connaît, la disparition soudaine d'un jeune garçon va mener ses amis à découvrir des phénomènes surnaturels.",
+      type: "series",
+      link: "/streaming-video"
+    },
+    {
+      title: "La Casa de Papel",
+      platform: "Netflix",
+      image: "https://images.unsplash.com/photo-1564751858619-c88118f94177?auto=format&fit=crop&q=80&w=600",
+      description: "Un homme mystérieux, surnommé le Professeur, planifie le meilleur braquage jamais réalisé.",
+      type: "series",
+      link: "/streaming-video"
+    },
+    {
+      title: "The Witcher",
+      platform: "Netflix",
+      image: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80&w=600",
+      description: "Le sorceleur Geralt, un chasseur de monstres mutant, se bat pour trouver sa place dans un monde où les humains sont souvent plus vicieux que les bêtes.",
+      type: "series",
+      link: "/streaming-video"
+    }
+  ];
+  
+  const disneyTrending = [
+    {
+      title: "The Mandalorian",
+      platform: "Disney+",
+      image: "https://images.unsplash.com/photo-1608346128025-1896b97a6fa8?auto=format&fit=crop&q=80&w=600",
+      description: "Après la chute de l'Empire, un chasseur de primes solitaire voyage aux confins de la galaxie, loin de l'autorité de la Nouvelle République.",
+      type: "series",
+      link: "/streaming-video"
+    },
+    {
+      title: "WandaVision",
+      platform: "Disney+",
+      image: "https://images.unsplash.com/photo-1618945524163-32451704cbb8?auto=format&fit=crop&q=80&w=600",
+      description: "Wanda Maximoff et Vision, deux êtres surpuissants, vivent leur vie de banlieue idéale, mais commencent à soupçonner que tout n'est pas ce qu'il paraît.",
+      type: "series",
+      link: "/streaming-video"
+    },
+    {
+      title: "Loki",
+      platform: "Disney+",
+      image: "https://images.unsplash.com/photo-1621955964441-c173e01c135b?auto=format&fit=crop&q=80&w=600",
+      description: "Le dieu de la malice Loki reprend son rôle de méchant après les événements d'Avengers: Endgame.",
+      type: "series",
+      link: "/streaming-video"
+    }
+  ];
+  
+  const spotifyTrending = [
+    {
+      title: "Top Hits 2023",
+      platform: "Spotify",
+      image: "https://images.unsplash.com/photo-1516223725307-6f76b9ec8742?auto=format&fit=crop&q=80&w=600",
+      description: "Les titres les plus écoutés et les hits du moment sur Spotify.",
+      type: "music",
+      link: "/streaming-audio"
+    },
+    {
+      title: "Afrobeat Vibes",
+      platform: "Spotify",
+      image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=600",
+      description: "Les meilleurs titres Afrobeat pour danser et faire la fête.",
+      type: "music",
+      link: "/streaming-audio"
+    },
+    {
+      title: "Chill & Study",
+      platform: "Spotify",
+      image: "https://images.unsplash.com/photo-1513829596324-4bb2800c5efb?auto=format&fit=crop&q=80&w=600",
+      description: "Playlist parfaite pour étudier ou se détendre avec des morceaux lo-fi et ambient.",
+      type: "music",
+      link: "/streaming-audio"
+    }
+  ];
+
   return (
     <>
       <Navbar />
@@ -114,80 +197,27 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Popular categories */}
-        <section className="container mx-auto px-4 py-20">
+        {/* Trending on Platforms Section */}
+        <section className="container mx-auto px-4 py-20 animate-fade-in">
           <SectionHeader
-            title="Catégories Populaires"
-            description="Découvrez nos offres les plus demandées"
+            title="Tendances sur les plateformes"
+            description="Découvrez ce qui est populaire en ce moment"
           />
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className="relative h-64 bg-graphik-grey rounded-xl overflow-hidden group card-gradient-hover">
-              <img
-                src="https://images.unsplash.com/photo-1649972904349-6e44c42644a7?auto=format&fit=crop&q=80&w=600"
-                alt="Netflix"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-                <div className="flex items-center">
-                  <Play className="text-graphik-blue mr-2" />
-                  <h3 className="text-xl font-bold text-white">Netflix</h3>
-                </div>
-                <p className="text-gray-300 mb-4">
-                  Films, séries et documentaires en illimité
-                </p>
-                <Link to="/streaming-video">
-                  <Button className="bg-graphik-blue hover:bg-graphik-blue/80">
-                    Voir les offres
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative h-64 bg-graphik-grey rounded-xl overflow-hidden group card-gradient-hover">
-              <img
-                src="https://images.unsplash.com/photo-1500673922987-e212871fec22?auto=format&fit=crop&q=80&w=600"
-                alt="Spotify"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-                <div className="flex items-center">
-                  <Headphones className="text-graphik-blue mr-2" />
-                  <h3 className="text-xl font-bold text-white">Spotify</h3>
-                </div>
-                <p className="text-gray-300 mb-4">
-                  Plus de 70 millions de titres musicaux
-                </p>
-                <Link to="/streaming-audio">
-                  <Button className="bg-graphik-blue hover:bg-graphik-blue/80">
-                    Voir les offres
-                  </Button>
-                </Link>
-              </div>
-            </div>
-
-            <div className="relative h-64 bg-graphik-grey rounded-xl overflow-hidden group card-gradient-hover">
-              <img
-                src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=600"
-                alt="IPTV"
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex flex-col justify-end p-6">
-                <div className="flex items-center">
-                  <Tv className="text-graphik-blue mr-2" />
-                  <h3 className="text-xl font-bold text-white">IPTV Premium</h3>
-                </div>
-                <p className="text-gray-300 mb-4">
-                  Des milliers de chaînes en HD et 4K
-                </p>
-                <Link to="/iptv">
-                  <Button className="bg-graphik-blue hover:bg-graphik-blue/80">
-                    Voir les offres
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </div>
+          <TrendingCarousel 
+            title="Tendances sur Netflix" 
+            items={netflixTrending} 
+          />
+          
+          <TrendingCarousel 
+            title="Tendances sur Disney+" 
+            items={disneyTrending} 
+          />
+          
+          <TrendingCarousel 
+            title="Tendances sur Spotify" 
+            items={spotifyTrending} 
+          />
         </section>
 
         {/* How it works */}
