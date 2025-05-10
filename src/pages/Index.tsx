@@ -22,7 +22,7 @@ const Index = () => {
       platform: "Netflix",
       image: "https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?auto=format&fit=crop&q=80&w=600",
       description: "Dans une petite ville où tout le monde se connaît, la disparition soudaine d'un jeune garçon va mener ses amis à découvrir des phénomènes surnaturels.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     },
     {
@@ -30,7 +30,7 @@ const Index = () => {
       platform: "Netflix",
       image: "https://images.unsplash.com/photo-1564751858619-c88118f94177?auto=format&fit=crop&q=80&w=600",
       description: "Un homme mystérieux, surnommé le Professeur, planifie le meilleur braquage jamais réalisé.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     },
     {
@@ -38,7 +38,7 @@ const Index = () => {
       platform: "Netflix",
       image: "https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&q=80&w=600",
       description: "Le sorceleur Geralt, un chasseur de monstres mutant, se bat pour trouver sa place dans un monde où les humains sont souvent plus vicieux que les bêtes.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     }
   ];
@@ -49,7 +49,7 @@ const Index = () => {
       platform: "Disney+",
       image: "https://images.unsplash.com/photo-1608346128025-1896b97a6fa8?auto=format&fit=crop&q=80&w=600",
       description: "Après la chute de l'Empire, un chasseur de primes solitaire voyage aux confins de la galaxie, loin de l'autorité de la Nouvelle République.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     },
     {
@@ -57,7 +57,7 @@ const Index = () => {
       platform: "Disney+",
       image: "https://images.unsplash.com/photo-1618945524163-32451704cbb8?auto=format&fit=crop&q=80&w=600",
       description: "Wanda Maximoff et Vision, deux êtres surpuissants, vivent leur vie de banlieue idéale, mais commencent à soupçonner que tout n'est pas ce qu'il paraît.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     },
     {
@@ -65,7 +65,7 @@ const Index = () => {
       platform: "Disney+",
       image: "https://images.unsplash.com/photo-1621955964441-c173e01c135b?auto=format&fit=crop&q=80&w=600",
       description: "Le dieu de la malice Loki reprend son rôle de méchant après les événements d'Avengers: Endgame.",
-      type: "series",
+      type: "series" as "series",
       link: "/streaming-video"
     }
   ];
@@ -76,7 +76,7 @@ const Index = () => {
       platform: "Spotify",
       image: "https://images.unsplash.com/photo-1516223725307-6f76b9ec8742?auto=format&fit=crop&q=80&w=600",
       description: "Les titres les plus écoutés et les hits du moment sur Spotify.",
-      type: "music",
+      type: "music" as "music",
       link: "/streaming-audio"
     },
     {
@@ -84,7 +84,7 @@ const Index = () => {
       platform: "Spotify",
       image: "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&q=80&w=600",
       description: "Les meilleurs titres Afrobeat pour danser et faire la fête.",
-      type: "music",
+      type: "music" as "music",
       link: "/streaming-audio"
     },
     {
@@ -92,7 +92,7 @@ const Index = () => {
       platform: "Spotify",
       image: "https://images.unsplash.com/photo-1513829596324-4bb2800c5efb?auto=format&fit=crop&q=80&w=600",
       description: "Playlist parfaite pour étudier ou se détendre avec des morceaux lo-fi et ambient.",
-      type: "music",
+      type: "music" as "music",
       link: "/streaming-audio"
     }
   ];
