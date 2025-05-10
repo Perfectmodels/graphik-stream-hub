@@ -14,11 +14,15 @@ export interface ServicePrice {
  */
 export const fetchServicePrices = async (): Promise<ServicePrice[]> => {
   try {
-    // Use the rpc method to call the stored function
-    const { data, error } = await supabase.rpc('get_service_prices');
+    // Call the database function through a PostgreSQL query instead of RPC
+    const { data, error } = await supabase
+      .from('service_pricing')
+      .select('id, service_type, duration_months, price, is_promo')
+      .order('service_type', { ascending: true })
+      .order('duration_months', { ascending: true });
       
     if (error) throw error;
-    return data as ServicePrice[] || [];
+    return (data as ServicePrice[]) || [];
   } catch (error) {
     console.error("Erreur lors de la récupération des prix:", error);
     return [];
@@ -30,19 +34,21 @@ export const fetchServicePrices = async (): Promise<ServicePrice[]> => {
  */
 export const getServicePriceFromDB = async (serviceType: string, durationMonths: number): Promise<number | null> => {
   try {
-    // Call the stored function with parameters
-    const { data, error } = await supabase.rpc('get_service_price', {
-      p_service_type: serviceType,
-      p_duration_months: durationMonths
-    });
+    // Query directly instead of using RPC
+    const { data, error } = await supabase
+      .from('service_pricing')
+      .select('price')
+      .eq('service_type', serviceType)
+      .eq('duration_months', durationMonths)
+      .single();
       
     if (error) {
       console.error("Prix non trouvé, utilisation du calcul par défaut");
       return null;
     }
     
-    // Ensure we handle the returned data correctly
-    return data && typeof data === 'object' && 'price' in data ? data.price : null;
+    // Safely access the price property
+    return data && 'price' in data ? (data.price as number) : null;
   } catch (error) {
     console.error("Erreur lors de la récupération du prix:", error);
     return null;
@@ -54,11 +60,14 @@ export const getServicePriceFromDB = async (serviceType: string, durationMonths:
  */
 export const updateServicePrice = async (id: number, newPrice: number): Promise<boolean> => {
   try {
-    // Call the stored function with parameters
-    const { error } = await supabase.rpc('update_service_price', {
-      p_id: id,
-      p_price: newPrice
-    });
+    // Update directly instead of using RPC
+    const { error } = await supabase
+      .from('service_pricing')
+      .update({ 
+        price: newPrice,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', id);
     
     if (error) throw error;
     return true;
