@@ -6,8 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Edit, Save, X } from "lucide-react";
 import { toast } from "sonner";
-import { fetchServicePrices, ServicePrice } from "@/utils/serviceUtils";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchServicePrices, updateServicePrice, ServicePrice } from "@/utils/serviceUtils";
 
 const ServicePricingTable = () => {
   const [prices, setPrices] = useState<ServicePrice[]>([]);
@@ -33,16 +32,15 @@ const ServicePricingTable = () => {
 
   const handleSave = async (id: number) => {
     try {
-      const { error } = await supabase
-        .from('service_pricing')
-        .update({ price: editValue })
-        .eq('id', id);
-
-      if (error) throw error;
+      const success = await updateServicePrice(id, editValue);
       
-      toast.success("Prix mis à jour avec succès");
-      setEditingId(null);
-      loadPrices();
+      if (success) {
+        toast.success("Prix mis à jour avec succès");
+        setEditingId(null);
+        loadPrices();
+      } else {
+        throw new Error("La mise à jour a échoué");
+      }
     } catch (error) {
       console.error("Erreur lors de la mise à jour du prix:", error);
       toast.error("Erreur lors de la mise à jour du prix");
