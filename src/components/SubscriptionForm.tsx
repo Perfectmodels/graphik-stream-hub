@@ -53,7 +53,7 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
       durationMonths: "",
       paymentMethod: "",
       additionalInfo: "",
-      startDate: new Date(), // Ajout d'une date par défaut
+      startDate: new Date(),
     },
   });
 
@@ -62,19 +62,22 @@ const SubscriptionForm: React.FC<SubscriptionFormProps> = ({
     
     try {
       // Submit the form data and get the result
-      const data = await submitSubscriptionForm(values);
+      await submitSubscriptionForm(values);
       
       // Notification de succès
       toast.success("Demande d'abonnement envoyée avec succès", {
         description: "Les détails de votre abonnement seront envoyés par WhatsApp. Nous vous contacterons bientôt."
       });
       
-      // Redirection ou fermeture du modal
-      if (isModal && onClose) {
-        onClose();
-      } else {
-        navigate("/");
-      }
+      // Délai court avant de fermer le modal ou rediriger pour laisser le temps à WhatsApp de s'ouvrir
+      setTimeout(() => {
+        // Redirection ou fermeture du modal
+        if (isModal && onClose) {
+          onClose();
+        } else {
+          navigate("/");
+        }
+      }, 1500);
       
     } catch (error: any) {
       console.error("Erreur lors de l'envoi de la demande:", error);

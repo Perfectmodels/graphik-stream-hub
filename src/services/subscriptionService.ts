@@ -38,10 +38,27 @@ export const sendSubscriptionDocuments = async (subscriptionId: number, subscrip
       (subscriptionData.additional_info ? `\n*Informations supplémentaires:*\n${subscriptionData.additional_info}\n` : "") +
       `\n*ID de la demande:* ${subscriptionId}`);
     
-    // Open WhatsApp in a new window
+    // Ensure we're using the correct WhatsApp number
     const whatsappNumber = "+24174066461";
+    
+    // Create the WhatsApp URL
     const whatsappUrl = `https://api.whatsapp.com/send?phone=${whatsappNumber}&text=${message}`;
-    window.open(whatsappUrl, '_blank');
+    console.log("Opening WhatsApp URL:", whatsappUrl);
+    
+    // Force open in a new window with noopener and noreferrer for security
+    const newWindow = window.open(whatsappUrl, '_blank');
+    if (!newWindow) {
+      // If window.open fails (e.g., popup blocked), try a different approach
+      console.log("Window.open failed, trying location.href");
+      // Create a temporary anchor element and click it
+      const a = document.createElement('a');
+      a.href = whatsappUrl;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
     
     toast.success("Demande envoyée", {
       description: "Les détails de votre demande ont été envoyés. Vous serez redirigé vers WhatsApp."
@@ -119,8 +136,16 @@ export const submitSubscriptionForm = async (values: SubscriptionFormValues) => 
       console.log("Approval created successfully");
     }
 
-    // Send details via WhatsApp
-    await sendSubscriptionDocuments(data.id, subscriptionData);
+    // Send details via WhatsApp - waiting for a short delay to ensure the subscription is fully created
+    setTimeout(() => {
+      sendSubscriptionDocuments(data.id, subscriptionData)
+        .then(success => {
+          console.log("WhatsApp notification sent:", success);
+        })
+        .catch(err => {
+          console.error("Error sending WhatsApp notification:", err);
+        });
+    }, 500);
 
     return data;
   } catch (error) {

@@ -19,6 +19,11 @@ const Subscribe = () => {
         description: "Veuillez compléter le formulaire ci-dessous"
       });
     }
+
+    // Add message to explain WhatsApp redirection
+    toast.info("Redirection vers WhatsApp", {
+      description: "Après l'envoi du formulaire, vous serez redirigé automatiquement vers WhatsApp pour finaliser votre demande."
+    });
   }, [location.state]);
 
   return (
