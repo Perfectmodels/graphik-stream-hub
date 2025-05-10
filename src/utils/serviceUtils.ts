@@ -14,12 +14,11 @@ export interface ServicePrice {
  */
 export const fetchServicePrices = async (): Promise<ServicePrice[]> => {
   try {
-    // Call the RPC function using the rpc method with the correct function name
-    const { data, error } = await supabase
-      .rpc('get_service_prices');
+    // Use the rpc method to call the stored function
+    const { data, error } = await supabase.rpc('get_service_prices');
       
     if (error) throw error;
-    return data || [];
+    return data as ServicePrice[] || [];
   } catch (error) {
     console.error("Erreur lors de la récupération des prix:", error);
     return [];
@@ -31,20 +30,19 @@ export const fetchServicePrices = async (): Promise<ServicePrice[]> => {
  */
 export const getServicePriceFromDB = async (serviceType: string, durationMonths: number): Promise<number | null> => {
   try {
-    // Call the RPC function using the rpc method with the correct parameters
-    const { data, error } = await supabase
-      .rpc('get_service_price', {
-        p_service_type: serviceType,
-        p_duration_months: durationMonths
-      });
+    // Call the stored function with parameters
+    const { data, error } = await supabase.rpc('get_service_price', {
+      p_service_type: serviceType,
+      p_duration_months: durationMonths
+    });
       
     if (error) {
       console.error("Prix non trouvé, utilisation du calcul par défaut");
       return null;
     }
     
-    // The response is already an object with a price property
-    return data && data.price ? data.price : null;
+    // Ensure we handle the returned data correctly
+    return data && typeof data === 'object' && 'price' in data ? data.price : null;
   } catch (error) {
     console.error("Erreur lors de la récupération du prix:", error);
     return null;
@@ -56,12 +54,11 @@ export const getServicePriceFromDB = async (serviceType: string, durationMonths:
  */
 export const updateServicePrice = async (id: number, newPrice: number): Promise<boolean> => {
   try {
-    // Call the RPC function using the rpc method with the correct parameters
-    const { error } = await supabase
-      .rpc('update_service_price', {
-        p_id: id,
-        p_price: newPrice
-      });
+    // Call the stored function with parameters
+    const { error } = await supabase.rpc('update_service_price', {
+      p_id: id,
+      p_price: newPrice
+    });
     
     if (error) throw error;
     return true;
